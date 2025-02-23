@@ -1,0 +1,31 @@
+FUNCTION_BLOCK DWORD_TO_STRH_Block
+
+	VAR_INPUT
+		IN :	DWORD;
+	END_VAR
+
+	VAR_OUTPUT
+		DWORD_TO_STRH :	STRING;
+	END_VAR
+
+	DWORD_TO_STRH:=DWORD_TO_STRING(IN);
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalOUT  : STRING;
+	func_block : DWORD_TO_STRH_Block;
+  END_VAR
+	func_block.IN  := LocalVar0;
+	func_block();
+	LocalOUT := func_block.DWORD_TO_STRH;
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

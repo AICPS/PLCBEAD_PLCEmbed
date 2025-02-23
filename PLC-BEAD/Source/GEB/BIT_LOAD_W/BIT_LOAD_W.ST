@@ -1,0 +1,25 @@
+FUNCTION BIT_LOAD_W:WORD
+	VAR_INPUT
+		IN :	WORD;
+		VAL :	BOOL;
+		POS :	INT;
+	END_VAR
+
+	IF VAL THEN
+		BIT_LOAD_W := IN OR SHL(WORD#1,POS);
+	ELSE
+		BIT_LOAD_W := IN AND (NOT SHL(WORD#1,POS));
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : WORD;
+	LocalVaR1  : BOOL;
+	LocalVaR2 : INT;
+    LocalOUT  : WORD;
+  END_VAR
+
+  LocalOUT := BIT_LOAD_W(LocalVar0, LocalVaR1 , LocalVaR2);
+END_PROGRAM
+

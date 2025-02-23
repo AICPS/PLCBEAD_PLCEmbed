@@ -1,0 +1,102 @@
+TYPE
+  oscat_CHARNAMES	: ARRAY [1..11] OF STRING;
+END_TYPE
+
+FUNCTION_BLOCK SETUP_CHARNAMES_Block
+
+	VAR_IN_OUT
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+	
+	VAR
+		init :	BOOL;
+	END_VAR
+
+	IF init THEN RETURN; END_IF;
+
+	init := TRUE;
+
+	CHARNAMES[01] := '123';
+	CHARNAMES[02] := '456';
+	CHARNAMES[03] := 'zgsdafasf';
+	CHARNAMES[04] := 'sadfsdfa';
+	CHARNAMES[05] := 'asdfdsafdfds';
+	CHARNAMES[06] := 'sadfsdfsdf';
+	CHARNAMES[07] := 'sfsfdfdddd';
+	CHARNAMES[08] := 'dddddted';
+	CHARNAMES[10] := 'wer';
+	CHARNAMES[11] := 'werwer';
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK CHR_TO_STRING_Block
+	VAR_INPUT
+		C :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		CHR_TO_STRING :	STRING;
+	END_VAR
+
+	CHR_TO_STRING := BYTE_TO_STRING(C);
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK CHARNAME_Block
+
+	VAR_INPUT
+		C :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		CHARNAME :	STRING;
+	END_VAR
+
+	VAR
+		CHARNAME2 :	STRING;
+		POS :	INT;
+		i :	INT;
+		CHR_TO_STRING :	CHR_TO_STRING_Block;
+		SETUP_CHARNAMES :	SETUP_CHARNAMES_Block;
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+
+	SETUP_CHARNAMES(CHARNAMES:=CHARNAMES);
+	CHARNAMES:=SETUP_CHARNAMES.CHARNAMES;
+
+	IF C <> BYTE#0 THEN
+		(* construct search string from code followed by $ SIGN, also clear CHARNAME string*)
+		CHR_TO_STRING(C:=C);
+		CHARNAME := CHR_TO_STRING.CHR_TO_STRING;
+		CHARNAME2 := CONCAT(CHARNAME,'&');
+		CHARNAME := CONCAT(';', CHARNAME2);
+		WHILE POS = 0 AND (i < 11) DO
+			i := i + 1;
+			POS := FIND(CHARNAMES[i], CHARNAME);
+		END_WHILE;
+		IF POS > 0 THEN
+			CHARNAME := MID(CHARNAMES[i], 10, POS + 3);
+			(* search for end of NAME and truncate *)
+			POS := FIND(CHARNAME, ';');
+			CHARNAME := LEFT(CHARNAME,POS - 1);
+		ELSE
+			CHR_TO_STRING(C:=C);
+			CHARNAME := CHR_TO_STRING.CHR_TO_STRING;
+		END_IF;
+	ELSE
+		CHARNAME := '';
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	C :	BYTE;
+	CHARNAME :	STRING;
+	func_block : CHARNAME_Block;
+  END_VAR
+	func_block.C  :=C ;
+	func_block();
+	CHARNAME := func_block.CHARNAME;
+END_PROGRAM
+

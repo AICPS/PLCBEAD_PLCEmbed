@@ -1,0 +1,23 @@
+FUNCTION MS_TO_KMH:REAL
+
+	VAR_INPUT
+		MS :	REAL;
+	END_VAR
+
+	MS_TO_KMH := ms * 3.6;
+
+END_FUNCTION
+
+
+PROGRAM program0
+	VAR
+		MS :	REAL;
+
+		OUT : REAL;
+	END_VAR
+
+	OUT := MS_TO_KMH(MS);
+	
+END_PROGRAM
+
+

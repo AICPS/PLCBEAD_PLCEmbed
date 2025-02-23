@@ -1,0 +1,61 @@
+FUNCTION HOUR:INT
+	VAR_INPUT
+		ITOD :	UDINT;
+	END_VAR
+	hour := UDINT_TO_INT(itod / UDINT#3600000);
+END_FUNCTION
+
+FUNCTION MINUTE:INT
+
+	VAR_INPUT
+		ITOD :	UDINT;
+	END_VAR
+
+
+	minute := UDINT_TO_INT((itod / UDINT#60000) - ((itod / UDINT#3600000) * UDINT#60));
+
+END_FUNCTION
+
+FUNCTION_BLOCK TOD_TO_STRING_Block
+	VAR_INPUT
+		ITOD :	UDINT;
+	END_VAR
+
+	VAR_OUTPUT
+		TOD_STRING :	STRING;
+	END_VAR
+
+	VAR
+		st_tmp1 :	STRING;
+		st_tmp2 :	STRING;
+		cur_hours :	INT;
+	END_VAR
+
+	cur_hours := hour(ITOD);
+	IF cur_hours = 0 THEN
+	st_tmp2 := '%01dh';
+	ELSE
+	st_tmp2 := '%dh';
+	END_IF;
+
+	st_tmp1 := CONCAT(INT_TO_STRING(cur_hours),INT_TO_STRING(minute(ITOD)));
+	TOD_STRING := CONCAT(st_tmp1,UDINT_TO_STRING(ITOD MOD UDINT#60000 / UDINT#1000));
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : UDINT;
+	LocalOUT  : STRING;
+	func_block : TOD_TO_STRING_Block;
+  END_VAR
+	func_block.ITOD  := LocalVar0;
+	func_block();
+	LocalOUT := func_block.TOD_STRING;
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

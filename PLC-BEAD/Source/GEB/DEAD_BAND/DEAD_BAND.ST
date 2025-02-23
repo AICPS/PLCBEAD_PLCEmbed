@@ -1,0 +1,26 @@
+FUNCTION DEAD_BAND:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		L :	REAL;
+	END_VAR
+
+	IF X > L THEN
+		DEAD_BAND := X - L;
+	ELSIF X < -L THEN
+		DEAD_BAND := X + L;
+	ELSE
+		DEAD_BAND := 0.0;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := DEAD_BAND(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

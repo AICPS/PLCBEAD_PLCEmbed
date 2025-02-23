@@ -1,0 +1,35 @@
+FUNCTION REFLECT:DWORD
+	VAR_INPUT
+		D :	DWORD;
+		L :	INT;
+	END_VAR
+
+	VAR
+		i :	INT;
+		_d :	DWORD;
+	END_VAR
+
+	REFLECT := DWORD#0;
+	_d := D;
+	FOR i := 1 TO L DO
+		REFLECT := SHL(REFLECT, 1) OR BOOL_TO_DWORD((_d AND DWORD#2#0000_0001) > DWORD#0); (* D.0 *)
+		_d := SHR(_d, 1);
+	END_FOR;
+	REFLECT := REFLECT OR SHL(_d, L);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalVar1 : INT;
+	LocalOUT  : DWORD;
+  END_VAR
+  	LocalOUT := REFLECT(LocalVar0, LocalVar1);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

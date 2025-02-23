@@ -1,0 +1,105 @@
+PROGRAM SMTP_CLIENT_DEMO
+
+	VAR
+		SMTP_CLIENT :	SMTP_CLIENT;
+		smtp_activate :	BOOL;
+		smtp_files :	oscat_STRING250;
+		smtp_timeout :	TIME := T#10s;
+		smtp_error_t :	BYTE;
+		smtp_error_c :	DWORD;
+		smtp_busy :	BOOL;
+		smtp_done :	BOOL;
+		smtp_dti :	UDINT;
+		smtp_dti_offset :	INT := 60;
+		smtp_server :	STRING := '110876022:oscat123456@mail.gmx.net';
+		smtp_mailfrom :	STRING := 'oscat@gmx.net;Station_01';
+		smtp_mailto :	oscat_STRING250 := 'oscat@gmx.net';
+		smtp_subject :	STRING := 'Das ist der Betreff';
+		smtp_body :	oscat_STRING250 := 'Das ist der Email-Text';
+		IP4_DECODE :	IP4_DECODE;
+	END_VAR
+
+	[GRA]
+	400 400 0 0 0 0 0 
+
+	[LIT]
+	8
+	40 32 63 32 0 ""
+	62 36 63 36 0 ""
+	62 40 63 40 0 ""
+	62 44 63 44 0 ""
+	62 48 63 48 0 ""
+	62 52 63 52 0 ""
+	62 56 63 56 0 ""
+	17 32 18 32 0 ""
+
+	[TET]
+	23
+	49 35 62 37 4 5 smtp_server
+	94 35 107 37 4 3 smtp_server
+	47 39 62 41 4 5 smtp_mailfrom
+	94 39 109 41 4 3 smtp_mailfrom
+	49 43 62 45 4 5 smtp_mailto
+	94 43 107 45 4 3 smtp_mailto
+	49 47 62 49 4 5 smtp_subject
+	94 47 107 49 4 3 smtp_subject
+	51 51 62 53 4 5 smtp_body
+	94 51 105 53 4 3 smtp_body
+	51 55 62 57 4 5 smtp_files
+	94 55 105 57 4 3 smtp_files
+	49 15 63 17 4 5 smtp_activate
+	49 19 63 21 4 5 smtp_timeout
+	53 23 63 25 4 5 smtp_dti
+	48 27 63 29 4 5 smtp_dti_offset
+	94 15 106 17 4 3 smtp_done
+	94 19 105 21 4 3 smtp_busy
+	94 23 108 25 4 3 smtp_error_c
+	94 27 107 29 4 3 smtp_error_t
+	20 25 38 28 7 6 IP4_DECODE
+	8 31 17 33 4 5 '8.8.8.8'
+	65 9 92 12 7 6 SMTP_CLIENT
+
+	[FBS]
+	2
+	327700 786460 38 36 0 0 IP4_DECODE IP4_DECODE  
+	917569 786444 92 60 0 0 SMTP_CLIENT SMTP_CLIENT  
+
+	[FPT]
+	17
+	20 31 26 33 STR 0 0 0 0 4226 0 @ oscat_STRING80 
+	26 31 38 33 IP4_DECODE 0 0 0 1 0 130 @ DWORD 
+	65 15 78 17 ACTIVATE 0 0 0 0 4225 0 @ BOOL 
+	65 19 77 21 TIMEOUT 0 0 0 0 4224 0 @ TIME 
+	65 23 71 25 DTI 0 0 0 0 4224 0 @ UDINT 
+	65 27 80 29 DTI_OFFSET 0 0 0 0 4224 0 @ INT 
+	65 31 76 33 DNS_IP4 0 0 0 0 4224 0 @ DWORD 
+	85 15 92 17 DONE 0 0 0 1 0 4225 @ BOOL 
+	85 19 92 21 BUSY 0 0 0 1 0 4225 @ BOOL 
+	82 23 92 25 ERROR_C 0 0 0 1 0 4224 @ DWORD 
+	81 27 92 29 ERROR_T 0 0 0 1 0 4224 @ BYTE 
+	65 35 92 37 SERVER 0 0 0 2 128 128 @ STRING 
+	65 39 92 41 MAILFROM 0 0 0 2 128 128 @ STRING 
+	65 43 92 45 MAILTO 0 0 0 2 128 128 @ oscat_STRING250 
+	65 47 92 49 SUBJECT 0 0 0 2 128 128 @ STRING 
+	65 51 92 53 BODY 0 0 0 2 128 128 @ oscat_STRING250 
+	65 55 92 57 FILES 0 0 0 2 128 128 @ oscat_STRING250 
+
+	[AKT]
+	0
+
+	[STT]
+	0
+
+	[TRT]
+	0
+
+	[KOT]
+	0
+
+	[VER]
+	0
+
+	[IBX]
+	0
+
+END_PROGRAM

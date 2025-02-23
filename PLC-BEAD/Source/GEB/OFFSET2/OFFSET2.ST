@@ -1,0 +1,45 @@
+FUNCTION OFFSET2:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		O1 :	BOOL;
+		O2 :	BOOL;
+		O3 :	BOOL;
+		O4 :	BOOL;
+		D :	BOOL;
+		OFFSET_1 :	REAL;
+		OFFSET_2 :	REAL;
+		OFFSET_3 :	REAL;
+		OFFSET_4 :	REAL;
+		DEFAULT :	REAL;
+	END_VAR
+
+	IF D THEN Offset2 := default; ELSE Offset2 := X; END_IF;
+	IF O4 THEN Offset2 := Offset2 + offset_4;
+	ELSIF O3 THEN Offset2 := Offset2 + offset_3;
+	ELSIF O2 THEN Offset2 := Offset2 + offset_2;
+	ELSIF O1 THEN Offset2 := Offset2 + offset_1;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		X :	REAL;
+		O1 :	BOOL;
+		O2 :	BOOL;
+		O3 :	BOOL;
+		O4 :	BOOL;
+		D :	BOOL;
+		OFFSET_1 :	REAL;
+		OFFSET_2 :	REAL;
+		OFFSET_3 :	REAL;
+		OFFSET_4 :	REAL;
+		DEFAULT :	REAL;
+		OUT : REAL;
+	END_VAR
+
+	OUT := OFFSET2(X, O1, O2, O3, O4, D, OFFSET_1, OFFSET_2, OFFSET_3, OFFSET_4, DEFAULT);
+END_PROGRAM
+
+

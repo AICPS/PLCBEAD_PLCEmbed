@@ -1,0 +1,25 @@
+FUNCTION TANC:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	IF X = 0.0 THEN
+		TANC := 1.0;
+	ELSE
+		TANC := TAN(X) / x;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+
+	VAR
+		X :	REAL;
+		CEIL5_OUT : REAL;
+	END_VAR
+
+	CEIL5_OUT := TANC(X);
+
+END_PROGRAM
+

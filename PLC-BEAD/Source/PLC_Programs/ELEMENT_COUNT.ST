@@ -1,0 +1,62 @@
+TYPE
+	oscat_STRING250             : STRING;
+END_TYPE
+
+FUNCTION_BLOCK ELEMENT_COUNT_Block
+
+	VAR_IN_OUT
+		ELEMENT :	oscat_STRING250;
+	END_VAR
+
+
+	VAR_INPUT
+		SEP :	BYTE;
+	END_VAR
+
+
+	VAR_OUTPUT
+		ELEMENT_COUNT :	INT;
+	END_VAR
+
+
+	VAR
+		I :	INT;
+		pos :	INT;
+	END_VAR
+
+	i := LEN(ELEMENT);
+	IF i = 0 THEN
+		ELEMENT_COUNT := 0;
+	ELSE
+		ELEMENT_COUNT := 1;
+		FOR pos := 1 TO I DO
+			IF INT_TO_BYTE(GET_CHAR(ELEMENT,pos)) = SEP THEN ELEMENT_COUNT := ELEMENT_COUNT + 1; END_IF;
+		END_FOR;
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+	VAR
+		SEP :	BYTE;
+		POS :	INT;
+		ELEMENT :	oscat_STRING250;
+		ELEMENT_GET :	oscat_STRING250;
+
+		func_block : ELEMENT_COUNT_Block;
+	END_VAR
+	func_block.SEP    :=SEP    ;
+	func_block.POS:=POS;
+	func_block.ELEMENT     :=ELEMENT     ;
+	func_block();
+	ELEMENT    := func_block.ELEMENT    ;
+	ELEMENT_GET:= func_block.ELEMENT_GET;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

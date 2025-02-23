@@ -1,0 +1,161 @@
+FUNCTION FLOOR2 : DINT
+	VAR_INPUT
+		x : REAL;
+	END_VAR
+
+	FLOOR2 := REAL_TO_DINT(X);
+	IF DINT_TO_REAL(FLOOR2) > X THEN
+		FLOOR2 := FLOOR2 - DINT#1;
+	END_IF;
+	
+END_FUNCTION
+
+FUNCTION MODR:REAL
+
+	VAR_INPUT
+		IN :	REAL;
+		DIVI :	REAL;
+	END_VAR
+
+
+	IF divi = 0.0 THEN
+		MODR := 0.0;
+	ELSE
+		MODR := in - DINT_TO_REAL(FLOOR2(in / divi)) * divi;
+	END_IF;
+
+END_FUNCTION
+
+FUNCTION RAD:REAL
+
+	VAR_INPUT
+		DEGG :	REAL;
+	END_VAR
+
+	RAD := MODR(0.0174532925199433 * DEGG , 6.283185307179586476);
+
+END_FUNCTION
+
+FUNCTION REFRACTION:REAL
+
+	VAR_INPUT
+		ELEV :	REAL;
+	END_VAR
+
+	VAR
+		tmp :	REAL;
+	END_VAR
+
+
+	tmp := LIMIT(-1.9, elev, 80.0);
+	REFRACTION := 0.0174532925199433 / TAN(0.0174532925199433 * (tmp + 10.3 / (tmp + 5.11)));
+
+END_FUNCTION
+
+FUNCTION TOD_TO_REAL2:REAL
+	VAR_INPUT
+		IN :	UDINT;
+	END_VAR
+	TOD_TO_REAL2 := UDINT_TO_REAL(IN);
+END_FUNCTION
+
+FUNCTION DEG:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	DEG := MODR(57.29577951308232 * X, 360.0);
+END_FUNCTION
+
+FUNCTION DT_TO_TOD2:UDINT
+	VAR_INPUT
+		IN :	UDINT;
+	END_VAR
+
+	DT_TO_TOD2 := (IN MOD UDINT#86400) * UDINT#1000;
+END_FUNCTION
+
+FUNCTION_BLOCK SUN_POS
+
+	VAR_INPUT
+		LATITUDE :	REAL;
+		LONGITUDE :	REAL;
+		UTC :	UDINT;
+	END_VAR
+
+	VAR_OUTPUT
+		B :	REAL;
+		HR :	REAL;
+	END_VAR
+
+	VAR
+		g :	REAL;
+		a :	REAL;
+		d :	REAL;
+		h :	REAL;
+		t1 :	REAL;
+		n :	REAL;
+		e :	REAL;
+		c :	REAL;
+		tau :	REAL;
+		sin_d :	REAL;
+		rlat :	REAL;
+		sin_lat :	REAL;
+		cos_lat :	REAL;
+		cos_tau :	REAL;
+		cos_d :	REAL;
+		MATH_PI :	REAL := 3.14159265358979323846264338327950288;
+		MATH_PI2 :	REAL := 6.28318530717958647692528676655900576;
+	END_VAR
+
+
+	n := UDINT_TO_REAL(UTC - UDINT#946728000) * 0.000011574074074074;
+	g :=MODR(6.240040768 + 0.01720197 * n, MATH_PI2);
+	d := MODR(4.89495042 + 0.017202792 * n, MATH_PI2) + 0.033423055 * SIN(g) + 0.000349066 * SIN(2.0*g);
+	e := 0.409087723 - 0.000000006981317008 * n;
+	cos_d := COS(d);
+	sin_d := SIN(d);
+	a := ATAN(COS(e) * sin_d / cos_d);
+	IF cos_d < 0.0 THEN a := a + MATH_PI; END_IF;
+	c := ASIN(SIN(e) * sin_d);
+
+	(* also here we must be very careful utc is from 1.1.1970 for step7 the formula must change *)
+	tau := RAD(MODR(6.697376 + (n - 0.25) * 0.0657098245037645 + TOD_TO_REAL2(DT_TO_TOD2(utc)) * 0.0000002785383333, 24.0) * 15.0 + longitude) - a;
+	rlat := RAD(latitude);
+	sin_lat := SIN(rlat);
+	cos_lat := COS(rlat);
+	cos_tau := COS(tau);
+	t1 := cos_tau * sin_lat - TAN(c) * cos_lat;
+	B := ATAN(SIN(tau) / t1);
+	IF t1 < 0.0 THEN B := B + MATH_PI2; ELSE B := B + MATH_PI; END_IF;
+	B := DEG(MODR(B, MATH_PI2));
+	h := DEG(ASIN(COS(C) * cos_tau * cos_lat +SIN(c) * sin_lat));
+	IF h > 180.0 THEN h := h - 360.0; END_IF;
+	(* consider refraction *)
+	HR := h + REFRACTION(h);
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	LATITUDE :	REAL;
+	LONGITUDE :	REAL;
+	UTC :	UDINT;
+	B :	REAL;
+	HR :	REAL;
+	func_block : SUN_POS;
+  END_VAR
+	func_block.LATITUDE  :=LATITUDE ;
+	func_block.LONGITUDE  :=LONGITUDE ;
+	func_block.UTC  :=UTC ;
+	func_block();
+	B := func_block.B;
+	HR := func_block.HR;
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

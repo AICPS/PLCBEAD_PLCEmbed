@@ -1,0 +1,43 @@
+FUNCTION_BLOCK SHA1_TO_STRH_Block
+
+	VAR_INPUT
+		SHA1 :	oscat_aB0_19;
+	END_VAR
+
+
+	VAR_OUTPUT
+		SHA1_TO_STRH :	oscat_STRING40;
+	END_VAR
+
+
+	VAR
+		buf :	oscat_aB0_39;
+		i :	INT;
+		tmp :	INT;
+		x :	INT;
+		BUF_TO_STRING :	BUF_TO_STRING;
+	END_VAR
+
+	x := 0;
+	FOR i := 0 TO 19 DO;
+		tmp := BYTE_TO_INT(SHR_BYTE(SHA1[i],4));
+		buf[x] := INT_TO_BYTE(tmp + SEL(tmp <= 9,87,48));
+		x := x + 1;
+		tmp := BYTE_TO_INT(SHA1[i] AND BYTE#2#1111);
+		buf[x] := INT_TO_BYTE(tmp + SEL(tmp <= 9,87,48));
+		x := x + 1;
+	END_FOR;
+
+	FOR x := 0 TO 1 DO
+		BUF_TO_STRING.REQ := x > 0;
+		BUF_TO_STRING.BUF_FORMAT := TRUE;
+		BUF_TO_STRING.BUF_OFFS := DINT#0;
+		BUF_TO_STRING.BUF_CNT := DINT#40;
+		BUF_TO_STRING.BUFFER := buf;
+		BUF_TO_STRING.DST := SHA1_TO_STRH;
+		BUF_TO_STRING();
+		buf := BUF_TO_STRING.BUFFER;
+		SHA1_TO_STRH := BUF_TO_STRING.DST;
+	END_FOR;
+
+END_FUNCTION_BLOCK

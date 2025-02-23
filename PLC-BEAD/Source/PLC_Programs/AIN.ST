@@ -1,0 +1,70 @@
+FUNCTION _BYTE_TO_INT:INT
+	VAR_INPUT
+		IN :	BYTE;
+	END_VAR
+
+	_BYTE_TO_INT := USINT_TO_INT(BYTE_TO_USINT(IN));
+END_FUNCTION
+
+FUNCTION _DWORD_TO_REAL:REAL
+	VAR_INPUT
+		IN :	DWORD;
+	END_VAR
+
+	_DWORD_TO_REAL := UDINT_TO_REAL(DWORD_TO_UDINT(IN));
+END_FUNCTION
+
+FUNCTION BIT_OF_DWORD:BOOL
+	VAR_INPUT
+		IN :	DWORD;
+		N :	INT;
+	END_VAR
+	BIT_OF_DWORD := (SHR(in,n) AND DWORD#1) > DWORD#0;
+END_FUNCTION
+
+FUNCTION AIN:REAL
+	VAR_INPUT
+		IN :	DWORD;
+		BITS :	BYTE;
+		SIGN :	BYTE;
+		LOW :	REAL;
+		HIGH :	REAL;
+	END_VAR
+
+	VAR
+		temp1 :	DWORD;
+		temp2 :	DWORD;
+		sx :	BOOL;
+	END_VAR
+
+	IF sign < BYTE#32 THEN
+		temp1 := SHR(in, _BYTE_TO_INT(sign));
+		sx := BIT_OF_DWORD(temp1,0); (* temp1.X0 *)
+	ELSE
+		sx := FALSE;
+	END_IF;
+	temp1 := SHR(DWORD#16#FFFFFFFF,32 - _BYTE_TO_INT(bits));
+	temp2 := in AND temp1;
+	AIN := (high - low)* _DWORD_TO_REAL(temp2) / _DWORD_TO_REAL(temp1) + low;
+	IF sx THEN AIN := -AIN; END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalVar1 : BYTE;
+	LocalVar2 : BYTE;
+	LocalVar3 : REAL;
+	LocalVar4 : REAL;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := AIN(LocalVar0, LocalVar1, LocalVar2, LocalVar3, LocalVar4);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

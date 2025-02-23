@@ -1,0 +1,20 @@
+FUNCTION GOLD:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+
+	GOLD := (X + SQRT(X*X + 4.0)) * 0.5;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+   	X :	REAL;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := GOLD(X);
+END_PROGRAM
+

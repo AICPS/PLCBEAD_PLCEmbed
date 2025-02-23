@@ -1,0 +1,26 @@
+FUNCTION MUX_R2:REAL
+
+	VAR_INPUT
+		IN0 :	REAL;
+		IN1 :	REAL;
+		A :	BOOL;
+	END_VAR
+
+	MUX_R2 := SEL(A, IN0, IN1);
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		IN0 :	REAL;
+		IN1 :	REAL;
+		A :	BOOL;
+
+		OUT : REAL;
+	END_VAR
+
+	OUT := MUX_R2(IN0, IN1, A);
+	
+END_PROGRAM
+
+

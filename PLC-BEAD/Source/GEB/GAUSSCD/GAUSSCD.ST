@@ -1,0 +1,54 @@
+FUNCTION SGN : INT
+  VAR_INPUT
+    X : REAL;
+  END_VAR
+
+  IF X > 0.0 THEN
+  	SGN := 1;
+  ELSIF X < 0.0 THEN
+  	SGN := -1;
+  ELSE
+  	SGN := 0;
+  END_IF;
+END_FUNCTION
+
+FUNCTION ERF:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	VAR
+		X2 :	REAL;
+		AX2 :	REAL;
+	END_VAR
+
+	X2 := X*X;
+	AX2 := 0.147 * X2 + 1.0;
+	ERF := SQRT(1.0 - EXP(-X2 * ((0.27323954473516 + AX2)/(AX2)))) * INT_TO_REAL(SGN(X));
+
+END_FUNCTION
+
+FUNCTION GAUSSCD:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		U :	REAL;
+		SI :	REAL;
+	END_VAR
+
+	GAUSSCD := (ERF((X - U) / (SI * 1.414213562)) + 1.0) * 0.5;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    X :	REAL;
+	U :	REAL;
+	SI :	REAL;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := GAUSSCD(X, U, SI);
+END_PROGRAM
+

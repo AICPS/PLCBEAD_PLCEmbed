@@ -1,0 +1,291 @@
+TYPE
+	oscat_STRING2 : STRING;
+	oscat_STRING10 : STRING;
+END_TYPE
+
+TYPE oscat_HOLIDAY_DATA :
+	STRUCT
+		NAME : STRING;
+		DAY : SINT;
+		MONTH : SINT;
+		USE : SINT;
+		PAD_BYTE : BYTE;
+	END_STRUCT;
+END_TYPE
+
+TYPE
+	oscat_HOLIDAY_DATA_0_29 	: ARRAY [0..29] OF oscat_HOLIDAY_DATA;
+END_TYPE
+
+TYPE
+	oscat_ELEMENT_WEEKDAYS	: ARRAY [1..7] OF oscat_STRING10;
+  	oscat_WEEKDAYS			: ARRAY [1..3] OF oscat_ELEMENT_WEEKDAYS := [0,0,0];
+	oscat_ELEMENT_WEEKDAYS2	: ARRAY [1..7] OF oscat_STRING2;
+  	oscat_WEEKDAYS2			: ARRAY [1..3] OF oscat_ELEMENT_WEEKDAYS2 := [0,0,0];
+END_TYPE
+
+TYPE oscat_LANGUAGE:
+  STRUCT
+    DEFAULT 	: INT;
+	LMAX    	: INT;    
+  END_STRUCT;
+END_TYPE
+
+FUNCTION_BLOCK SETUP_HOLIDAY_FR_Block
+
+	VAR_IN_OUT
+		HD :	oscat_HOLIDAY_DATA_0_29;
+	END_VAR
+
+
+	VAR
+		init :	BOOL;
+	END_VAR
+
+
+	IF init THEN RETURN; END_IF;
+
+	init := TRUE;
+
+	HD[00].NAME := 'Nouve an';
+	HD[00].DAY  := SINT#01;
+	HD[00].MONTH := SINT#01;
+	HD[00].USE := SINT#01;
+
+	HD[01].NAME := 'St Valentin';
+	HD[01].DAY  := SINT#14;
+	HD[01].MONTH := SINT#02;
+	HD[01].USE := SINT#00;
+
+	HD[02].NAME := 'Vendredi Saint (alsace)';
+	HD[02].DAY  := SINT#-2;
+	HD[02].MONTH := SINT#00;
+	HD[02].USE := SINT#00;
+
+	HD[03].NAME := 'Dimanche de pques';
+	HD[03].DAY  := SINT#00;
+	HD[03].MONTH := SINT#00;
+	HD[03].USE := SINT#01;
+
+	HD[04].NAME := 'Lundi de pques';
+	HD[04].DAY  := SINT#01;
+	HD[04].MONTH := SINT#00;
+	HD[04].USE := SINT#01;
+
+	HD[05].NAME := 'Jeudi de Ascension';
+	HD[05].DAY  := SINT#39;
+	HD[05].MONTH := SINT#00;
+	HD[05].USE := SINT#01;
+
+	HD[06].NAME := 'dimanche de Pentecte';
+	HD[06].DAY  := SINT#49;
+	HD[06].MONTH := SINT#00;
+	HD[06].USE := SINT#01;
+
+	HD[07].NAME := 'jeudi de la Trinit';
+	HD[07].DAY  := SINT#60;
+	HD[07].MONTH := SINT#00;
+	HD[07].USE := SINT#00;
+
+	HD[08].NAME := 'Fte du travail';
+	HD[08].DAY  := SINT#01;
+	HD[08].MONTH := SINT#05;
+	HD[08].USE := SINT#01;
+
+	HD[09].NAME := 'Victoire 1945 ';
+	HD[09].DAY  := SINT#08;
+	HD[09].MONTH := SINT#05;
+	HD[09].USE := SINT#01;
+
+	HD[10].NAME := 'Prise de La bastille';
+	HD[10].DAY  := SINT#14;
+	HD[10].MONTH := SINT#07;
+	HD[10].USE := SINT#01;
+
+	HD[11].NAME := '15 Aot 1944';
+	HD[11].DAY  := SINT#15;
+	HD[11].MONTH := SINT#08;
+	HD[11].USE := SINT#01;
+
+	HD[12].NAME := 'Halloween';
+	HD[12].DAY  := SINT#31;
+	HD[12].MONTH := SINT#10;
+	HD[12].USE := SINT#00;
+
+	HD[13].NAME := 'Armistice 1918';
+	HD[13].DAY  := SINT#11;
+	HD[13].MONTH := SINT#11;
+	HD[13].USE := SINT#01;
+
+	HD[14].NAME := 'Nol';
+	HD[14].DAY  := SINT#25;
+	HD[14].MONTH := SINT#12;
+	HD[14].USE := SINT#01;
+
+	HD[15].NAME := 'Saint tienne (alsace)';
+	HD[15].DAY  := SINT#26;
+	HD[15].MONTH := SINT#12;
+	HD[15].USE := SINT#00;
+
+	HD[16].NAME := 'Fte de la musique';
+	HD[16].DAY  := SINT#21;
+	HD[16].MONTH := SINT#06;
+	HD[16].USE := SINT#00;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK SETUP_LANGUAGE_Block
+
+	VAR_IN_OUT
+		LANGUAGE :	oscat_LANGUAGE;
+	END_VAR
+
+	VAR
+		init :	BOOL;
+	END_VAR
+
+	IF init THEN RETURN; END_IF;
+	init := TRUE;
+
+	LANGUAGE.DEFAULT  := 1; (* 1=english, 2=german 3=french *)
+	LANGUAGE.LMAX := 3;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK SETUP_WEEKDAYS_Block
+
+	VAR_IN_OUT
+		WEEKDAYS :	oscat_WEEKDAYS;
+	END_VAR
+
+	VAR
+		init :	BOOL;
+	END_VAR
+
+	IF init THEN RETURN; END_IF;
+	init := TRUE;
+
+	WEEKDAYS[1][01] := 'Monday';
+	WEEKDAYS[1][02] := 'Tuesday';
+	WEEKDAYS[1][03] := 'Wednesday';
+	WEEKDAYS[1][04] := 'Thursday';
+	WEEKDAYS[1][05] := 'Friday';
+	WEEKDAYS[1][06] := 'Saturday';
+	WEEKDAYS[1][07] := 'Sunday';
+
+	WEEKDAYS[2][01] := 'Montag';
+	WEEKDAYS[2][02] := 'Dienstag';
+	WEEKDAYS[2][03] := 'Mittwoch';
+	WEEKDAYS[2][04] := 'Donnerstag';
+	WEEKDAYS[2][05] := 'Freitag';
+	WEEKDAYS[2][06] := 'Samstag';
+	WEEKDAYS[2][07] := 'Sonntag';
+
+	WEEKDAYS[3][01] := 'Lundi';
+	WEEKDAYS[3][02] := 'Mardi';
+	WEEKDAYS[3][03] := 'Mercredi';
+	WEEKDAYS[3][04] := 'Jeudi';
+	WEEKDAYS[3][05] := 'Vendredi';
+	WEEKDAYS[3][06] := 'Samedi';
+	WEEKDAYS[3][07] := 'Dimanche';
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK WEEKDAY_TO_STRING_Block
+	VAR_INPUT
+		WDAY :	INT;
+		LANG :	INT;
+		LX :	INT;
+	END_VAR
+
+	VAR_OUTPUT
+		WEEKDAY_TO_STRING :	STRING;
+	END_VAR
+
+
+	VAR
+		LY :	INT;
+		SETUP_LANGUAGE :	SETUP_LANGUAGE_Block;
+		LANGUAGE :	oscat_LANGUAGE;
+		WEEKDAYS :	oscat_WEEKDAYS;
+		WEEKDAYS2 :	oscat_WEEKDAYS2;
+		SETUP_WEEKDAYS :	SETUP_WEEKDAYS_Block;
+		SETUP_WEEKDAYS2 :	SETUP_WEEKDAYS2_Block;
+	END_VAR
+
+
+	SETUP_WEEKDAYS(WEEKDAYS:=WEEKDAYS);
+	WEEKDAYS:=SETUP_WEEKDAYS.WEEKDAYS;
+	SETUP_WEEKDAYS2(WEEKDAYS2:=WEEKDAYS2);
+	WEEKDAYS2:=SETUP_WEEKDAYS2.WEEKDAYS2;
+	SETUP_LANGUAGE(LANGUAGE:=LANGUAGE);
+	LANGUAGE:=SETUP_LANGUAGE.LANGUAGE;
+
+	IF LANG = 0 THEN ly := LANGUAGE.DEFAULT; ELSE ly := MIN(LANG, LANGUAGE.LMAX); END_IF;
+	IF wday < 1 OR wday > 7 THEN
+		RETURN;
+	ELSIF LX = 0 THEN
+		WEEKDAY_TO_STRING := WEEKDAYS[ly][WDAY];
+	ELSIF Lx = 2 THEN
+		WEEKDAY_TO_STRING := WEEKDAYS2[ly][WDAY];
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK SETUP_WEEKDAYS2_Block
+
+	VAR_IN_OUT
+		WEEKDAYS2 :	oscat_WEEKDAYS2;
+	END_VAR
+
+	VAR
+		init :	BOOL;
+	END_VAR
+
+
+	IF init THEN RETURN; END_IF;
+	init := TRUE;
+
+	WEEKDAYS2[1][01] := 'Mo';
+	WEEKDAYS2[1][02] := 'Tu';
+	WEEKDAYS2[1][03] := 'We';
+	WEEKDAYS2[1][04] := 'Th';
+	WEEKDAYS2[1][05] := 'Fr';
+	WEEKDAYS2[1][06] := 'Sa';
+	WEEKDAYS2[1][07] := 'Su';
+
+	WEEKDAYS2[2][01] := 'Mo';
+	WEEKDAYS2[2][02] := 'Di';
+	WEEKDAYS2[2][03] := 'Mi';
+	WEEKDAYS2[2][04] := 'Do';
+	WEEKDAYS2[2][05] := 'Fr';
+	WEEKDAYS2[2][06] := 'Sa';
+	WEEKDAYS2[2][07] := 'So';
+
+	WEEKDAYS2[3][01] := 'Lu';
+	WEEKDAYS2[3][02] := 'Ma';
+	WEEKDAYS2[3][03] := 'Me';
+	WEEKDAYS2[3][04] := 'Je';
+	WEEKDAYS2[3][05] := 'Ve';
+	WEEKDAYS2[3][06] := 'Sa';
+	WEEKDAYS2[3][07] := 'Di';
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  	VAR
+		WDAY :	INT;
+		LANG :	INT;
+		LX :	INT;
+		WEEKDAY_TO_STRING :	STRING;
+		func_block : WEEKDAY_TO_STRING_Block;
+  	END_VAR
+	func_block.WDAY := WDAY;
+	func_block.LANG := LANG;
+	func_block.LX := LX;
+	func_block();
+	WEEKDAY_TO_STRING := func_block.WEEKDAY_TO_STRING;
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

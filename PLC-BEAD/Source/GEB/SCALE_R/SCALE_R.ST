@@ -1,0 +1,32 @@
+FUNCTION SCALE_R:REAL
+	VAR_INPUT
+		X :	REAL;
+		I_LO :	REAL;
+		I_HI :	REAL;
+		O_LO :	REAL;
+		O_HI :	REAL;
+	END_VAR
+
+	IF I_LO = I_HI THEN
+		SCALE_R := O_LO;
+	ELSE
+		SCALE_R := (O_HI - O_LO) / (I_HI - I_LO) * (LIMIT(I_LO, X, I_HI) - I_LO) + O_LO;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+
+  	VAR
+		X :	REAL;
+		I_LO :	REAL;
+		I_HI :	REAL;
+		O_LO :	REAL;
+		O_HI :	REAL;
+		CEIL5_OUT : REAL;
+  	END_VAR
+
+  	CEIL5_OUT := SCALE_R(X, I_LO, I_HI, O_LO, O_HI);
+END_PROGRAM
+		
+

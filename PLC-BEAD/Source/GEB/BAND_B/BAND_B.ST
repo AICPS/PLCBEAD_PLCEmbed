@@ -1,0 +1,24 @@
+FUNCTION BAND_B:BYTE
+	VAR_INPUT
+		X :	BYTE;
+		B :	BYTE;
+	END_VAR
+
+	IF X < B THEN
+		BAND_B := BYTE#0;
+	ELSIF X > USINT_TO_BYTE(USINT#255 - BYTE_TO_USINT(B)) THEN
+		BAND_B := BYTE#255;
+	ELSE
+		BAND_B := X;
+	END_IF;
+END_FUNCTION
+PROGRAM program0
+  VAR
+    LocalVar0 : BYTE;
+	LocalVaR1  : BYTE;
+    LocalOUT  : BYTE;
+  END_VAR
+
+  LocalOUT := BAND_B(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

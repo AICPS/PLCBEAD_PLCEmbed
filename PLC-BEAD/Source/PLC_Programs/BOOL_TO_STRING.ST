@@ -1,0 +1,34 @@
+TYPE
+  oscat_STRING1               : STRING(1);
+END_TYPE
+
+FUNCTION_BLOCK BOOL_TO_STRING_Block
+	VAR_INPUT
+		IN :	BOOL;
+	END_VAR
+
+	VAR_OUTPUT
+		BOOL_TO_STRING :	oscat_STRING1;
+	END_VAR
+
+	BOOL_TO_STRING := SEL_STRING(IN,'0','1');
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : BOOL;
+	LocalOUT  : oscat_STRING1;
+	func_block : BOOL_TO_STRING_Block;
+  END_VAR
+	func_block.IN := LocalVar0;
+	func_block();
+	LocalOUT := func_block.BOOL_TO_STRING;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

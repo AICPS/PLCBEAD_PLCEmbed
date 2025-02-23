@@ -1,0 +1,18 @@
+FUNCTION BFT_TO_MS:REAL
+	VAR_INPUT
+		BFT :	INT;
+	END_VAR
+
+	BFT_TO_MS := EXPT(INT_TO_REAL(BFT), 1.5) * 0.836;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : INT;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := BFT_TO_MS(LocalVar0);
+END_PROGRAM
+

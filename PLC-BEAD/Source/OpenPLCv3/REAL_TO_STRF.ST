@@ -1,0 +1,85 @@
+FUNCTION EXP10 : REAL
+
+	VAR_INPUT
+		x : REAL;
+	END_VAR
+
+	exp10 := EXP(X * 2.30258509299405);
+	
+END_FUNCTION
+
+FUNCTION _REAL_TO_DINT:DINT
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	IF REAL_TO_DINT(0.5) = DINT#1 THEN
+		_REAL_TO_DINT := REAL_TO_DINT(x);
+		RETURN;
+	END_IF;
+
+	IF X > 0.0 THEN
+		_REAL_TO_DINT := REAL_TO_DINT(x+0.5); 
+	ELSIF X < 0.0 THEN 
+		_REAL_TO_DINT := REAL_TO_DINT(x-0.5); 
+	ELSE 
+		_REAL_TO_DINT := DINT#0;
+	END_IF;
+END_FUNCTION
+
+FUNCTION_BLOCK REAL_TO_STRF_Block
+
+	VAR_INPUT
+		IN :	REAL;
+		N :	INT;
+		D :	STRING;
+	END_VAR
+
+	VAR_OUTPUT
+		REAL_TO_STRF :	STRING;
+	END_VAR
+
+	VAR
+		st_tmp : STRING;
+		i :	INT;
+	END_VAR
+
+
+	N := LIMIT(0,N,7);
+	REAL_TO_STRF := DINT_TO_STRING(_REAL_TO_DINT(ABS(in) * EXP10(INT_TO_REAL(N))));
+	FOR i := LEN(REAL_TO_STRF) TO N DO
+		st_tmp := REAL_TO_STRF;	
+		REAL_TO_STRF := CONCAT('0', st_tmp);
+	END_FOR;
+	IF n > 0 THEN REAL_TO_STRF := INSERT(REAL_TO_STRF, D, LEN(REAL_TO_STRF) - N); END_IF;
+	IF in < 0.0 THEN st_tmp := REAL_TO_STRF; REAL_TO_STRF := CONCAT('-', st_tmp); END_IF;
+
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+
+	VAR
+		IN :	REAL;
+		N :	INT;
+		D :	STRING;
+		
+        REAL_TO_STRF :	STRING;
+		func_block : REAL_TO_STRF_Block;
+	END_VAR
+		func_block.IN := IN;
+		func_block.N := N;
+		func_block.D := D;
+		func_block();
+		REAL_TO_STRF := func_block.REAL_TO_STRF;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+	
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

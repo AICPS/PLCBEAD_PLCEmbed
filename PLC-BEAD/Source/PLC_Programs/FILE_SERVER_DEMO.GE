@@ -1,0 +1,52 @@
+PROGRAM FILE_SERVER_DEMO
+
+	VAR
+		PT :	oscat_NETWORK_BUFFER;
+		FSD :	oscat_FILE_SERVER_DATA;
+		FILE_SERVER :	FILE_SERVER;
+	END_VAR
+
+	[GRA]
+	400 400 0 0 0 0 0 
+
+	[LIT]
+	0
+
+	[TET]
+	6
+	22 28 27 30 4 5 PT
+	45 28 50 30 4 3 PT
+	21 24 27 26 4 5 FSD
+	45 24 51 26 4 3 FSD
+	11 12 69 15 65536 6 4 0 222 0 0 0 0 0 0 Tahoma 
+	Die Test-Parameter sind �ber die FSD-Datenstruktur zu �bergeben 
+	29 18 43 21 7 6 FILE_SERVER
+
+	[FBS]
+	1
+	327709 327701 43 33 0 0 FILE_SERVER FILE_SERVER  
+
+	[FPT]
+	2
+	29 24 43 26 FSD 0 0 0 2 128 128 @ oscat_FILE_SERVER_DATA 
+	29 28 43 30 PT 0 0 0 2 128 128 @ oscat_NETWORK_BUFFER 
+
+	[AKT]
+	0
+
+	[STT]
+	0
+
+	[TRT]
+	0
+
+	[KOT]
+	0
+
+	[VER]
+	0
+
+	[IBX]
+	0
+
+END_PROGRAM

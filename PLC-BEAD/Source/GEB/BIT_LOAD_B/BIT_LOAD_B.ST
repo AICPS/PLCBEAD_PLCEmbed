@@ -1,0 +1,25 @@
+FUNCTION BIT_LOAD_B:BYTE
+	VAR_INPUT
+		IN :	BYTE;
+		VAL :	BOOL;
+		POS :	INT;
+	END_VAR
+
+	IF VAL THEN
+		BIT_LOAD_B := IN OR SHL(BYTE#1,POS);
+	ELSE
+		BIT_LOAD_B := IN AND (NOT SHL(BYTE#1,POS));
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : BYTE;
+	LocalVaR1  : BOOL;
+	LocalVaR2 : INT;
+    LocalOUT  : BYTE;
+  END_VAR
+
+  LocalOUT := BIT_LOAD_B(LocalVar0, LocalVaR1 , LocalVaR2);
+END_PROGRAM
+

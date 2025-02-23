@@ -1,0 +1,108 @@
+TYPE
+  oscat_CHARNAMES	: ARRAY [1..11] OF STRING;
+END_TYPE
+
+FUNCTION_BLOCK SETUP_CHARNAMES_Block
+
+	VAR_IN_OUT
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+	
+	VAR
+		init :	BOOL;
+	END_VAR
+
+	IF init THEN RETURN; END_IF;
+
+	init := TRUE;
+
+	CHARNAMES[01] := '123';
+	CHARNAMES[02] := '456';
+	CHARNAMES[03] := 'zgsdafasf';
+	CHARNAMES[04] := 'sadfsdfa';
+	CHARNAMES[05] := 'asdfdsafdfds';
+	CHARNAMES[06] := 'sadfsdfsdf';
+	CHARNAMES[07] := 'sfsfdfdddd';
+	CHARNAMES[08] := 'dddddted';
+	CHARNAMES[10] := 'wer';
+	CHARNAMES[11] := 'werwer';
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK CHR_TO_STRING_Block
+	VAR_INPUT
+		C :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		CHR_TO_STRING :	STRING;
+	END_VAR
+
+	CHR_TO_STRING := BYTE_TO_STRING(C);
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK CHARNAME_Block
+
+	VAR_INPUT
+		C :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		CHARNAME :	STRING;
+	END_VAR
+
+	VAR
+		CHARNAME2 :	STRING;
+		pos :	INT;
+		i :	INT;
+		CHR_TO_STRING :	CHR_TO_STRING_Block;
+		SETUP_CHARNAMES :	SETUP_CHARNAMES_Block;
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+
+	SETUP_CHARNAMES(CHARNAMES:=CHARNAMES);
+	CHARNAMES:=SETUP_CHARNAMES.CHARNAMES;
+
+	IF C <> BYTE#0 THEN
+		(* construct search string from code followed by $ sign, also clear charname string*)
+		CHR_TO_STRING(C:=C);
+		CHARNAME := CHR_TO_STRING.CHR_TO_STRING;
+		CHARNAME2 := CONCAT(CHARNAME,'&');
+		CHARNAME := CONCAT(';', CHARNAME2);
+		WHILE pos = 0 AND (i < 11) DO
+			i := i + 1;
+			pos := FIND(CHARNAMES[i], CHARNAME);
+		END_WHILE;
+		IF pos > 0 THEN
+			CHARNAME := MID(CHARNAMES[i], 10, pos + 3);
+			(* search for end of name and truncate *)
+			pos := FIND(CHARNAME, ';');
+			CHARNAME := LEFT(CHARNAME,pos - 1);
+		ELSE
+			CHR_TO_STRING(C:=C);
+			CHARNAME := CHR_TO_STRING.CHR_TO_STRING;
+		END_IF;
+	ELSE
+		CHARNAME := '';
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	C :	BYTE;
+	CHARNAME :	STRING;
+	func_block : CHARNAME_Block;
+  END_VAR
+	func_block.C  :=C ;
+	func_block();
+	CHARNAME := func_block.CHARNAME;
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

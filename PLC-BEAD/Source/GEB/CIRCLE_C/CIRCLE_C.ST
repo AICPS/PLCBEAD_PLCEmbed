@@ -1,0 +1,18 @@
+FUNCTION CIRCLE_C:REAL
+	VAR_INPUT
+		RX :	REAL;
+		AX :	REAL;
+	END_VAR
+
+	CIRCLE_C := 1.7453293E-2 * RX * AX;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := CIRCLE_C(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

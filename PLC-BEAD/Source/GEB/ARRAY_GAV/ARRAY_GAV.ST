@@ -1,0 +1,60 @@
+TYPE
+	oscat_PT_ARRAY: ARRAY [1..100] OF REAL;
+END_TYPE
+
+FUNCTION SQRTN:REAL
+	VAR_INPUT
+		X :	REAL;
+		N :	INT;
+	END_VAR
+
+	IF N > 0 THEN
+		SQRTN := EXP(LN(X) / INT_TO_REAL(N));
+	ELSE
+		SQRTN := 0.0;
+	END_IF;
+END_FUNCTION
+
+FUNCTION_BLOCK ARRAY_GAV_Block
+	VAR_IN_OUT
+		PT :	oscat_PT_ARRAY;
+	END_VAR
+
+	VAR_INPUT
+		SIZE :	UINT;
+	END_VAR
+
+	VAR_OUTPUT
+		ARRAY_GAV :	REAL;
+	END_VAR
+
+	VAR
+		i :	INT;
+		STOP :	INT;
+	END_VAR
+
+	STOP :=LIMIT_INT(1,UINT_TO_INT(SIZE),1000);
+	ARRAY_GAV := 1.0;
+	FOR i := 1 TO STOP DO
+		IF PT[i] > 0.0 THEN
+			ARRAY_GAV := ARRAY_GAV * PT[i];
+		ELSE
+			ARRAY_GAV := 0.0;
+			RETURN;
+		END_IF;
+	END_FOR;
+	ARRAY_GAV := SQRTN(ARRAY_GAV,STOP);
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : oscat_PT_ARRAY;
+    LocalVaR1  : UINT;
+	LocalOUT  : REAL;
+	func_block : ARRAY_GAV_Block;
+  END_VAR
+	func_block(PT := LocalVar0,SIZE := LocalVaR1 );
+	LocalOUT := func_block.ARRAY_GAV;
+
+END_PROGRAM
+

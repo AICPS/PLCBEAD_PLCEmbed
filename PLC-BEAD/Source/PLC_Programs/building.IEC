@@ -1,0 +1,38 @@
+(*@PROPERTIES_EX@
+TYPE: DATA_TYPE
+LOCALE: 0
+*)
+(* ------------------------------------------- *)
+
+TYPE oscat_TIMER_EVENT_DATA :
+  STRUCT
+	TYP          : BYTE;
+	CHANNEL      : BYTE;
+	DAY          : BYTE;
+	START        : UDINT;
+	DURATION     : TIME;
+	LAND         : BYTE;
+	LOR          : BYTE;
+	LAST         : UDINT;
+  END_STRUCT;
+END_TYPE
+
+TYPE
+  oscat_TIMER_EVENT           : ARRAY [0..63]    OF oscat_TIMER_EVENT_DATA;
+END_TYPE
+
+(* ------------------------------------------- *)
+
+TYPE
+  oscat_T_AVG24         	  : ARRAY [0..47]   OF INT;
+
+  oscat_TP4_qn                : ARRAY [0..3]    OF BOOL;
+
+  oscat_bsa_X                 : ARRAY [0..2]    OF BYTE;
+  oscat_blind_scene_array     : ARRAY [0..15]   OF oscat_bsa_X;
+
+END_TYPE
+
+
+
+

@@ -1,0 +1,47 @@
+FUNCTION BIT_OF_DWORD : BOOL
+  VAR_INPUT
+    IN : DWORD;
+    N : INT;
+  END_VAR
+
+  BIT_OF_DWORD := (SHR(in,N) AND 16#00000001) > 0;
+END_FUNCTION
+
+FUNCTION CHECK_PARITY:BOOL
+
+	VAR_INPUT
+		IN :	DWORD;
+		P :	BOOL;
+	END_VAR
+
+	VAR
+		in2 :	DWORD;
+	END_VAR
+
+	in2:=in;
+	check_parity := NOT p;
+	WHILE in2 > DWORD#0 DO
+		check_parity := check_parity XOR BIT_OF_DWORD(in2,0) XOR BIT_OF_DWORD(in2,1) XOR BIT_OF_DWORD(in2,2) XOR BIT_OF_DWORD(in2,3);
+		in2 := SHR(in2,4);
+	END_WHILE;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+    LocalVar1 : BOOL;
+    CEIL5_OUT : BOOL;
+  END_VAR
+
+  CEIL5_OUT := CHECK_PARITY(LocalVar0, LocalVar1);
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

@@ -1,0 +1,18 @@
+FUNCTION F_TO_OM:REAL
+
+	VAR_INPUT
+		F :	REAL;
+	END_VAR
+
+	F_TO_OM := 6.283185307179586476 * F;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	  LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := F_TO_OM(LocalVar0);
+END_PROGRAM
+

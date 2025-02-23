@@ -1,0 +1,18 @@
+FUNCTION CIRCLE_A:REAL
+	VAR_INPUT
+		RX :	REAL;
+		AX :	REAL;
+	END_VAR
+
+	CIRCLE_A := RX * RX * 8.726646E-3 * AX;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := CIRCLE_A(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

@@ -1,0 +1,61 @@
+PROGRAM RC4_CRYPT_DEMO
+
+	VAR
+		RC4_CRYPT_STREAM :	RC4_CRYPT_STREAM;
+		mode :	INT;
+		key :	oscat_STRING40;
+		buf :	oscat_aB0_63;
+		size :	UDINT;
+		pos :	UDINT;
+	END_VAR
+
+	[GRA]
+	400 400 0 0 0 0 0 
+
+	[LIT]
+	0
+
+	[TET]
+	10
+	37 18 44 20 4 5 mode
+	70 18 77 20 4 3 mode
+	39 22 44 24 4 5 key
+	70 22 75 24 4 3 key
+	39 26 44 28 4 5 buf
+	70 26 75 28 4 3 buf
+	39 30 44 32 4 5 size
+	70 30 75 32 4 3 size
+	70 34 75 36 4 3 pos
+	46 12 68 15 7 6 RC4_CRYPT_STREAM
+
+	[FBS]
+	1
+	458798 458767 68 39 0 0 RC4_CRYPT_STREAM RC4_CRYPT_STREAM  
+
+	[FPT]
+	5
+	46 18 68 20 MODE 0 0 0 2 128 128 @ INT 
+	46 22 68 24 KEY 0 0 0 2 128 128 @ oscat_STRING40 
+	46 26 68 28 BUF 0 0 0 2 128 128 @ oscat_aB0_63 
+	46 30 68 32 SIZE 0 0 0 2 128 128 @ UDINT 
+	62 34 68 36 POS 0 0 0 1 0 4224 @ UDINT 
+
+	[AKT]
+	0
+
+	[STT]
+	0
+
+	[TRT]
+	0
+
+	[KOT]
+	0
+
+	[VER]
+	0
+
+	[IBX]
+	0
+
+END_PROGRAM

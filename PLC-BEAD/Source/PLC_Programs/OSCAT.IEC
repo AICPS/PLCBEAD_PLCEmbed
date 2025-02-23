@@ -1,0 +1,347 @@
+(*@PROPERTIES_EX@
+TYPE: DATA_TYPE
+LOCALE: 0
+*)
+TYPE
+  oscat_STRING1               : STRING(1);
+  oscat_STRING2               : STRING(2);
+  oscat_STRING3               : STRING(3);
+  oscat_STRING4               : STRING(4);
+  oscat_STRING5               : STRING(5);
+  oscat_STRING8               : STRING(8);
+  oscat_STRING10              : STRING(10);
+  oscat_STRING12              : STRING(12);
+  oscat_STRING15              : STRING(15);
+  oscat_STRING20              : STRING(20);
+  oscat_STRING27              : STRING(27);
+  oscat_STRING30              : STRING(30);
+  oscat_STRING32              : STRING(32);
+  oscat_STRING40              : STRING(40);
+  oscat_STRING48              : STRING(48);
+  oscat_STRING50              : STRING(50);
+  oscat_STRING60              : STRING(60);
+  oscat_STRING64              : STRING(64);
+  oscat_STRING80              : STRING(80);
+  oscat_STRING120             : STRING(120);
+  oscat_STRING144             : STRING(144);
+  oscat_STRING160             : STRING(160);
+  oscat_STRING189             : STRING(189);
+  oscat_STRING192             : STRING(192);
+  oscat_STRING250             : STRING(250);
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+TYPE
+
+  oscat_arr_0_7               : ARRAY [0..7]    OF REAL;
+  oscat_arr_0_15              : ARRAY [0..15]   OF REAL;
+  oscat_delay_buf             : ARRAY [0..31]   OF REAL;
+  oscat_FT_TN64_array         : ARRAY [0..63]   OF REAL;
+  oscat_pt_ARRAY              : ARRAY [1..100]  OF REAL;
+
+  oscat_ardw_0_15             : ARRAY [0..15]   OF DWORD;
+  oscat_ardw_0_31             : ARRAY [0..31]   OF DWORD;
+
+  oscat_FILTER_MAV_W          : ARRAY [0..31]   OF WORD;
+  oscat_arb_0_3               : ARRAY [0..3]    OF BYTE;
+
+  oscat_esr_collect_data      : ARRAY [0..7]    OF BYTE;
+  oscat_DRIVER_4C 			  : ARRAY [1..7] 	OF BYTE;
+  oscat_arb_0_249 			  : ARRAY [0..249] 	OF BYTE;
+  oscat_bya_LIST_CLEAN        : ARRAY [1..250]  OF BYTE;
+
+  oscat_ari_0_30         	  : ARRAY [0..30]   OF INT;
+
+  oscat_stack_array 		  : ARRAY [1..32]   OF INT;
+
+  oscat_dcf77_bits            : ARRAY [0..58]   OF BOOL;
+
+  oscat_array64_time          : ARRAY [0..63]   OF TIME;
+
+  (* -------------------------------------------------- *)
+  oscat_PERIOD2_Y             : ARRAY [0..1]    OF UDINT;
+  oscat_PERIOD2_X             : ARRAY [0..3]    OF oscat_PERIOD2_Y;
+
+  oscat_ARRAY_X               : ARRAY [0..1]    OF REAL;
+  oscat_XY                    : ARRAY [1..20]   OF oscat_ARRAY_X;
+
+  oscat_parset_X              : ARRAY [1..4]    OF REAL;
+  oscat_parset                : ARRAY [0..3]    OF oscat_parset_X;
+
+  oscat_Polynom_ARRAY_X       : ARRAY [0..1]    OF REAL;
+  oscat_Polynom_XY            : ARRAY [1..5]    OF oscat_Polynom_ARRAY_X;
+
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+TYPE oscat_FRACTION :
+STRUCT
+	NUMERATOR : INT;
+	DENOMINATOR : INT;
+END_STRUCT;
+END_TYPE
+(*----------------------------------------------------------------------------------*)
+TYPE oscat_CALENDAR :
+	STRUCT
+		UTC : UDINT;				(* world time UTC *)
+		LDT : UDINT;				(* local time *)
+		LDATE : UDINT;				(* local date *)
+		LTOD : UDINT;				(* local time of day *)
+		YEAR : INT;					(* year of LDATE *)
+		MONTH : INT;				(* month of LDATE *)
+		DAY : INT;					(* day of LDATE *)
+		WEEKDAY : INT;				(* weekday of LDATE *)
+		OFFSET : INT;				(* Time Zone Offset for Local time in minutes *)
+		DST_EN : BOOL;				(* daylight savings time enable *)
+		DST_ON : BOOL;				(* true when daylight savings time os on *)
+		NAME : oscat_string5;		(* name of time zone *)
+		LANGUAGE : INT;			    (* language number pls see language setup *)
+		LONGITUDE : REAL;			(* longitude of current location *)
+		LATITUDE : REAL;			(* latitude of current location *)
+		SUN_RISE : UDINT;			(* sun_rise for current location *)
+		SUN_SET : UDINT;			(* sun_set for current location *)
+		SUN_MIDDAY : UDINT;			(* worldtime when sun stands at south position *)
+		SUN_HEIGTH : REAL;			(* suns heigth at midday, south position *)
+		SUN_HOR : REAL;				(* sun angle horizontal 0 = north in degrees *)
+		SUN_VER : REAL;				(* sun angle vertical above horizon in degrees *)
+		NIGHT : BOOL;				(* true between sun_set and sun_rise *)
+		HOLIDAY : BOOL;				(* true when holiday *)
+		HOLY_NAME : oscat_string30;	(* name of holiday *)
+		WORK_WEEK : INT;			(* current work week *)
+	END_STRUCT;
+END_TYPE
+
+TYPE oscat_SDT :
+STRUCT
+	YEAR : INT;
+	MONTH : INT;
+	DAY : INT;
+	WEEKDAY : INT;
+	HOUR : INT;
+	MINUTE : INT;
+	SECOND : INT;
+	MS : INT;
+END_STRUCT;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE oscat_LANGUAGE:
+  STRUCT
+    DEFAULT 	: INT;
+	LMAX    	: INT;    
+  END_STRUCT;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+TYPE
+	oscat_LOCATION_ELEMENTS	: ARRAY [1..5] OF INT;
+END_TYPE
+
+TYPE oscat_LOCATION:
+  STRUCT
+    DEFAULT 	: INT;
+	LMAX    	: INT;    
+	LANGUAGE	: oscat_LOCATION_ELEMENTS;
+  END_STRUCT;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE
+  oscat_ELEMENT_DIRS 		: ARRAY [0..15] OF oscat_STRING3;
+  oscat_DIRS				: ARRAY [1..3]  OF oscat_ELEMENT_DIRS;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+TYPE
+  oscat_CHARNAMES	: ARRAY [1..11] OF STRING;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE
+  oscat_ELEMENT_MONTHS 	: ARRAY [1..12] OF oscat_STRING10;
+  oscat_MONTHS			: ARRAY [1..3]  OF oscat_ELEMENT_MONTHS;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE
+  oscat_ELEMENT_MONTHS3	: ARRAY [1..12] OF oscat_STRING3;
+  oscat_MONTHS3			: ARRAY [1..3]  OF oscat_ELEMENT_MONTHS3;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE
+  oscat_ELEMENT_WEEKDAYS	: ARRAY [1..7] OF oscat_STRING10;
+  oscat_WEEKDAYS			: ARRAY [1..3]  OF oscat_ELEMENT_WEEKDAYS;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE
+  oscat_ELEMENT_WEEKDAYS2	: ARRAY [1..7] OF oscat_STRING2;
+  oscat_WEEKDAYS2			: ARRAY [1..3]  OF oscat_ELEMENT_WEEKDAYS2;
+END_TYPE
+
+TYPE oscat_esr_data :
+  STRUCT
+	typ    : BYTE;
+	adress : oscat_string10;
+	DS     : UDINT;
+	TS     : TIME;
+	data   : oscat_esr_collect_data;
+  END_STRUCT;
+END_TYPE
+
+TYPE
+  oscat_ESR_3                : ARRAY [0..3] OF oscat_esr_data;
+  oscat_ESR_31               : ARRAY [0..31] OF oscat_esr_data;
+END_TYPE
+
+TYPE oscat_vector_3 :
+  STRUCT
+	X : REAL;
+	Y : REAL;
+	Z : REAL;
+  END_STRUCT;
+END_TYPE
+
+TYPE oscat_complex :
+  STRUCT
+	re : REAL;
+	im : REAL;
+  END_STRUCT;
+END_TYPE
+
+TYPE REAL2 :
+  STRUCT
+	R1 : REAL;
+	RX : REAL;
+  END_STRUCT;
+END_TYPE
+
+(*----------------------------------------------------------------------------------*)
+
+TYPE oscat_HOLIDAY_DATA :
+  STRUCT
+	NAME : oscat_string30;
+	DAY : SINT;
+	MONTH : SINT;
+	USE : SINT;
+	PAD_BYTE : BYTE;
+  END_STRUCT;
+END_TYPE
+
+TYPE
+  oscat_HOLIDAY_DATA_0_29 	: ARRAY [0..29] OF oscat_HOLIDAY_DATA;
+  oscat_HOLIDAY_DATA_0_49 	: ARRAY [0..49] OF oscat_HOLIDAY_DATA;
+END_TYPE
+
+(* revision history
+hm	18. oct. 2008
+	original version
+
+*)
+
+(*	if month = 0 then F_day is the offset in days from easter
+	used :0 = NOT used, 1 = used, -1..-7 menas the weekday before the specified DATE example -3 means wednesday before 23.11
+*)
+
+(* samples for Holiday data
+
+	HOLIDAY_DE : ARRAY[0..29] OF HOLIDAY_DATA := (name := 'Neujahr', day := 1, month := 1, use := 1),
+		(name := 'Heilig Drei Könige', day := 6, month := 1, use := 1),
+		(name := 'Karfreitag', day := -2, month := 0, use := 1),
+		(name := 'Ostersonntag', day := 0, month := 0, use := 1),
+		(name := 'Ostermontag', day := 1, month := 0, use := 1),
+		(name := 'Tag der Arbeit', day := 1, month := 5, use := 1),
+		(name := 'Christi Himmelfahrt', day := 39, month := 0, use := 1),
+		(name := 'Pfingstsonntag', day := 49, month := 0, use := 1),
+		(name := 'Pfingstmontag', day := 50, month := 0, use := 1),
+		(name := 'Fronleichnam', day := 60, month := 0, use := 1),
+		(name := 'Augsburger Friedensfest', day := 8, month := 8, use := 0),
+		(name := 'Maria Himmelfahrt', day := 15, month := 8, use := 1),
+		(name := 'Tag der Deutschen Einheit', day := 3, month := 10, use := 1),
+		(name := 'Reformationstag', day := 31, month := 10, use := 0),
+		(name := 'Allerheiligen', day := 1, month := 11, use := 1),
+		(name := 'Buss und Bettag', day := 23, month := 11, use := 0),
+		(name := '1. Weihnachtstag', day := 25, month := 12, use := 1),
+		(name := '2. Weihnachtstag', day := 26, month := 12, use := 1);
+
+
+	HOLIDAY_AT : ARRAY[0..29] OF HOLIDAY_DATA := (name := 'Neujahr', day := 1, month := 1, use := 1),
+		(name := 'Heilig Drei Könige', day := 6, month := 1, use := 1),
+		(name := 'Karfreitag', day := -2, month := 0, use := 1),
+		(name := 'Ostersonntag', day := 0, month := 0, use := 1),
+		(name := 'Ostermontag', day := 1, month := 0, use := 1),
+		(name := '', day := 1, month := 5, use := 0),
+		(name := 'Christi Himmelfahrt', day := 39, month := 0, use := 1),
+		(name := 'Pfingstsonntag', day := 49, month := 0, use := 1),
+		(name := 'Pfingstmontag', day := 50, month := 0, use := 1),
+		(name := 'Fronleichnam', day := 60, month := 0, use := 1),
+		(name := '', day := 8, month := 8, use := 0),
+		(name := 'Maria Himmelfahrt', day := 15, month := 8, use := 1),
+		(name := '', day := 3, month := 10, use := 0),
+		(name := '', day := 31, month := 10, use := 0),
+		(name := 'Allerheiligen', day := 1, month := 11, use := 1),
+		(name := 'Maria Empfängnis', day := 8, month := 12, use := 1),
+		(name := '1. Weihnachtstag', day := 25, month := 12, use := 1),
+		(name := '2. Weihnachtstag', day := 26, month := 12, use := 1);
+
+	HOLIDAY_FR : ARRAY[0..29] OF HOLIDAY_DATA := (name := 'Nouvel an', day := 1, month := 1, use := 1),
+		(name := 'St Valentin', day := 14, month := 2, use := 0),
+		(name := 'Vendredi Saint (alsace)', day := -2, month := 0, use := 0),
+		(name := 'Dimanche de pâques', day := 0, month := 0, use := 1),
+		(name := 'Lundi de pâques', day := 1, month := 0, use := 1),
+		(name := 'Jeudi de Ascension', day := 39, month := 0, use := 1),
+		(name := 'dimanche de Pentecôte ', day := 49, month := 0, use := 1),
+		(name := 'jeudi de la Trinité', day := 60, month := 0, use := 0),
+		(name := 'Fête du travail', day := 1, month := 5, use := 1),
+		(name := 'Victoire 1945 ', day := 8, month := 5, use := 1),
+		(name := 'Prise de La bastille', day := 14, month := 7, use := 1),
+		(name := '15 Août 1944', day := 15, month := 8, use := 1),
+		(name := 'Halloween', day := 31, month := 10, use := 0),
+		(name := 'Armistice 1918', day := 11, month := 11, use := 1),
+		(name := 'Noël', day := 25, month := 12, use := 1),
+		(name := 'Saint Étienne (alsace)', day := 26, month := 12, use := 0),
+		(name := 'Fête de la musique', day := 21, month := 6, use := 0);
+
+
+	HOLIDAY_BED : ARRAY[0..29] OF HOLIDAY_DATA :=	(name := 'Neujahr', day := 1, month := 1, use := 1),
+		(name := 'Ostersonntag', day := 0, month := 0, use := 1),
+		(name := 'Ostermontag', day := 1, month := 0, use := 1),
+		(name := 'Tag der Arbeit', day := 1, month := 5, use := 1),
+		(name := 'Christi Himmelfahrt', day := 39, month := 0, use := 1),
+		(name := 'Pfingsten', day := 49, month := 0, use := 1),
+		(name := 'Pfingstmontag', day := 50, month := 0, use := 1),
+		(name := 'Nationalfeiertag', day := 21, month := 7, use := 1),
+		(name := 'Mariä Himmelfahrt', day := 15, month := 8, use := 1),
+		(name := 'Allerheiligen', day := 1, month := 11, use := 1),
+		(name := 'Feiertag DG', day := 15, month := 11, use := 1),
+		(name := 'Heiligabend', day := 24, month := 12, use := 1),
+		(name := '1. Weihnachtstag', day := 25, month := 12, use := 1),
+		(name := '2. Weihnachtstag', day := 26, month := 12, use := 1),
+		(name := 'Silvester', day := 31, month := 12, use := 1);
+
+
+	HOLIDAY_ITD : ARRAY[0..29] OF HOLIDAY_DATA := (name := 'Neujahr', day := 1, month := 1, use := 1),
+		(name := 'Heilig Drei Könige', day := 6, month := 1, use := 1),
+		(name := 'Ostersonntag', day := 0, month := 0, use := 1),
+		(name := 'Ostermontag', day := 1, month := 0, use := 1),
+		(name := 'Tag der Befeiung Italiens', day := 25, month := 4, use := 1),
+		(name := 'Tag der Arbeit', day := 1, month := 5, use := 1),
+		(name := 'Pfingsten', day := 49, month := 0, use := 1),
+		(name := 'Pfingstmontag', day := 50, month := 0, use := 1),
+		(name := 'Tag der Republik Italien', day := 2, month := 6, use := 1),
+		(name := 'Mariä Himmelfahrt', day := 15, month := 8, use := 1),
+		(name := 'Allerheiligen', day := 1, month := 11, use := 1),
+		(name := 'Mariä Empfängnis', day := 8, month := 12, use := 1),
+		(name := 'Heiligabend', day := 24, month := 12, use := 0),
+		(name := '1. Weihnachtstag', day := 25, month := 12, use := 1),
+		(name := '2. Stephanstag', day := 26, month := 12, use := 1);
+
+*)
+

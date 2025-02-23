@@ -1,0 +1,31 @@
+FUNCTION INC1:INT
+
+	VAR_INPUT
+		X :	INT;
+		N :	INT;
+	END_VAR
+
+	IF X >= N - 1 THEN
+		INC1 := 0;
+	ELSE
+		INC1 := X + 1;
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+	X :	INT;
+	N :	INT;
+    CEIL5_OUT : INT;
+  END_VAR
+
+  CEIL5_OUT := INC1(X, N);
+END_PROGRAM
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

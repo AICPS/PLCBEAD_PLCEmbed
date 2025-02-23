@@ -1,0 +1,24 @@
+FUNCTION INC1:INT
+
+	VAR_INPUT
+		X :	INT;
+		N :	INT;
+	END_VAR
+
+	IF X >= N - 1 THEN
+		INC1 := 0;
+	ELSE
+		INC1 := X + 1;
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+	X :	INT;
+	N :	INT;
+    CEIL5_OUT : INT;
+  END_VAR
+
+  CEIL5_OUT := INC1(X, N);
+END_PROGRAM
+

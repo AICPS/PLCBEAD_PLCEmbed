@@ -1,0 +1,88 @@
+TYPE oscat_SDT :
+	STRUCT
+		YEAR : INT;
+		MONTH : INT;
+		DAY : INT;
+		WEEKDAY : INT;
+		HOUR : INT;
+		MINUTE : INT;
+		SECOND : INT;
+		MS : INT;
+	END_STRUCT;
+END_TYPE
+
+FUNCTION _INT_TO_UDINT:UDINT
+	VAR_INPUT
+		IN :	INT;
+	END_VAR
+
+	_INT_TO_UDINT := DINT_TO_UDINT(INT_TO_DINT(IN));
+END_FUNCTION
+
+FUNCTION SET_DATE:UDINT
+
+	VAR_INPUT
+		YEAR :	INT;
+		MONTH :	INT;
+		DAY :	INT;
+	END_VAR
+
+
+	VAR
+		count :	INT;
+	END_VAR
+
+
+	IF month > 2 THEN
+		count := (month - 1) * 30;
+		IF month > 7 THEN
+			count := count + DWORD_TO_INT(SHR(DINT_TO_DWORD(INT_TO_DINT(month) - INT_TO_DINT(3)),1));
+		ELSE
+			count := count + DWORD_TO_INT(SHR(DINT_TO_DWORD(INT_TO_DINT(month) - INT_TO_DINT(4)),1));
+		END_IF;
+		IF SHL(INT_TO_WORD(year),14) = WORD#0 THEN
+			count := count + 1;
+		END_IF;
+	ELSE
+		count := (month - 1) * 31;
+	END_IF;
+	SET_DATE := (_INT_TO_UDINT(count + day - 1) + DWORD_TO_UDINT(SHR(UDINT_TO_DWORD(_INT_TO_UDINT(year) * UDINT#1461 - UDINT#2878169), 2))) * UDINT#86400;
+
+END_FUNCTION
+
+FUNCTION_BLOCK SDT_TO_DATE_Block
+
+	VAR_INPUT
+		DTI :	oscat_SDT;
+	END_VAR
+
+
+	VAR_OUTPUT
+		SDT_TO_DATE :	UDINT;
+	END_VAR
+
+	SDT_TO_DATE := SET_DATE(DTI.YEAR, DTI.MONTH, DTI.DAY);
+	
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+
+	VAR
+		DTI :	oscat_SDT;
+		SDT_TO_DATE :	UDINT;
+		func_block : SDT_TO_DATE_Block;
+  	END_VAR
+	func_block.DTI  :=	DTI;
+	func_block();
+	SDT_TO_DATE := func_block.SDT_TO_DATE;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+	
+END_CONFIGURATION

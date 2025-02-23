@@ -1,0 +1,47 @@
+TYPE
+	oscat_PT_ARRAY: ARRAY [1..100] OF REAL;
+END_TYPE
+
+FUNCTION_BLOCK ARRAY_HAV_Block
+	VAR_IN_OUT
+		PT :	oscat_PT_ARRAY;
+	END_VAR
+
+	VAR_INPUT
+		SIZE :	UINT;
+	END_VAR
+
+	VAR_OUTPUT
+		ARRAY_HAV :	REAL;
+	END_VAR
+
+	VAR
+		i :	INT;
+		STOP :	INT;
+	END_VAR
+
+	STOP :=LIMIT_INT(1,UINT_TO_INT(SIZE),1000);
+	ARRAY_HAV := 0.0;
+	FOR i := 1 TO STOP DO
+		IF PT[i] <> 0.0 THEN
+			ARRAY_HAV := ARRAY_HAV + 1.0/PT[i];
+		ELSE
+			ARRAY_HAV := 0.0;
+			RETURN;
+		END_IF;
+	END_FOR;
+	ARRAY_HAV := INT_TO_REAL(STOP) / ARRAY_HAV;
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : oscat_PT_ARRAY;
+    LocalVaR1  : UINT;
+	LocalOUT  : REAL;
+	func_block : ARRAY_HAV_Block;
+  END_VAR
+	func_block(PT := LocalVar0,SIZE := LocalVaR1 );
+	LocalOUT := func_block.ARRAY_HAV;
+
+END_PROGRAM
+

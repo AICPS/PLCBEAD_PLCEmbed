@@ -1,0 +1,132 @@
+TYPE
+	oscat_arb_0_249 			  : ARRAY [0..249] 	OF BYTE;
+END_TYPE
+
+FUNCTION REVERSE:BYTE
+VAR_INPUT
+	IN :	BYTE;
+END_VAR
+
+reverse := SHL(in,7) OR SHR(in,7) OR (ROR(in,3) AND BYTE#2#01000100) OR (ROL(in,3) AND BYTE#2#00100010)
+	OR (SHL(in,1) AND BYTE#2#00010000) OR (SHR(in,1) AND BYTE#2#00001000);
+
+END_FUNCTION
+
+FUNCTION REFLECT:DWORD
+	VAR_INPUT
+		D :	DWORD;
+		L :	INT;
+	END_VAR
+
+	VAR
+		i :	INT;
+		_d :	DWORD;
+	END_VAR
+
+	REFLECT := DWORD#0;
+	_d := D;
+	FOR i := 1 TO L DO
+		REFLECT := SHL(REFLECT, 1) OR BOOL_TO_DWORD((_d AND DWORD#2#0000_0001) > DWORD#0); (* D.0 *)
+		_d := SHR(_d, 1);
+	END_FOR;
+	REFLECT := REFLECT OR SHL(_d, L);
+END_FUNCTION
+
+FUNCTION_BLOCK CRC_GEN_Block
+	VAR_IN_OUT
+		PT :	oscat_arb_0_249;
+	END_VAR
+
+	VAR_INPUT
+		SIZE :	UINT;
+		PL :	UINT;
+		PN :	DWORD;
+		INIT :	DWORD;
+		REV_IN :	BOOL;
+		REV_OUT :	BOOL;
+		XOR_OUT :	DWORD;
+	END_VAR
+
+	VAR_OUTPUT
+		CRC_GEN :	DWORD;
+	END_VAR
+
+	VAR
+		pos :	INT;
+		shift :	INT;
+		dx :	BYTE;
+		bits :	INT;
+	END_VAR
+
+	shift := 32 - UINT_TO_INT(PL);
+	PN := SHL(PN, shift);
+
+	FOR pos := 0 TO 3 DO
+		IF REV_IN THEN CRC_GEN := SHL(CRC_GEN, 8) OR BYTE_TO_DWORD(REVERSE(PT[pos])); ELSE CRC_GEN := SHL(CRC_GEN, 8) OR BYTE_TO_DWORD(PT[pos]); END_IF;
+	END_FOR;
+	pos := 4;
+
+	CRC_GEN := CRC_GEN XOR SHL(init, shift);
+
+	WHILE pos < UINT_TO_INT(size) DO
+		IF REV_IN THEN DX := REVERSE(PT[pos]); ELSE DX := PT[pos]; END_IF;
+		pos := pos + 1;
+		FOR bits := 0 TO 7 DO
+			IF (CRC_GEN AND DWORD#16#8000_0000) > DWORD#0 THEN (* CRC_GEN.31 *)
+				CRC_GEN := (SHL(CRC_GEN, 1) OR BOOL_TO_DWORD((DX AND BYTE#16#80) > BYTE#0)) XOR PN; (* DX.7 *)
+			ELSE
+				CRC_GEN := SHL(CRC_GEN, 1) OR BOOL_TO_DWORD((DX AND BYTE#16#80) > BYTE#0); (* DX.7 *)
+			END_IF;
+			dx := SHL(dx, 1);
+		END_FOR;
+	END_WHILE;
+
+	FOR bits := 0 TO 31 DO
+		IF (CRC_GEN AND DWORD#16#8000_0000) > DWORD#0 THEN (* CRC_GEN.31 *)
+			CRC_GEN := (SHL(CRC_GEN, 1) OR BOOL_TO_DWORD((DX AND BYTE#16#80) > BYTE#0)) XOR PN; (* DX.7 *)
+		ELSE
+			CRC_GEN := SHL(CRC_GEN, 1) OR BOOL_TO_DWORD((DX AND BYTE#16#80) > BYTE#0); (* DX.7 *)
+		END_IF;
+	END_FOR;
+
+	CRC_GEN := SHR(CRC_GEN, shift) XOR XOR_OUT;
+
+	IF REV_OUT THEN CRC_GEN := REFLECT(CRC_GEN, UINT_TO_INT(PL)); END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	PT :	oscat_arb_0_249;
+
+	SIZE :	UINT;
+	PL :	UINT;
+	PN :	DWORD;
+	INIT :	DWORD;
+	REV_IN :	BOOL;
+	REV_OUT :	BOOL;
+	XOR_OUT :	DWORD;
+
+	CRC_GEN :	DWORD;
+	func_block : CRC_GEN_Block;
+  END_VAR
+	func_block.PT  :=PT ;
+	func_block.SIZE  :=SIZE ;
+	func_block.PL  :=PL ;
+	func_block.PN  :=PN ;
+	func_block.INIT  :=INIT ;
+	func_block.REV_IN  :=REV_IN ;
+	func_block.REV_OUT  :=REV_OUT ;
+	func_block.XOR_OUT  :=XOR_OUT ;
+	func_block();
+
+	PT := func_block.PT;
+	CRC_GEN := func_block.CRC_GEN;
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

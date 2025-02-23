@@ -1,0 +1,20 @@
+FUNCTION DIFFER:BOOL
+	VAR_INPUT
+		IN1 :	REAL;
+		IN2 :	REAL;
+		X :	REAL;
+	END_VAR
+
+	DIFFER := ABS(IN1 - IN2) > X;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalVaR2 : REAL;
+	LocalOUT  : BOOL;
+  END_VAR
+  	LocalOUT := DIFFER(LocalVar0, LocalVaR1 , LocalVaR2);
+END_PROGRAM
+

@@ -1,0 +1,27 @@
+FUNCTION BIT_LOAD_W2:WORD
+	VAR_INPUT
+		I :	WORD;
+		D :	BOOL;
+		P :	INT;
+		N :	INT;
+	END_VAR
+
+	IF D THEN
+		BIT_LOAD_W2 := ROL(SHR(WORD#16#FFFF, 16 - N) OR ROR(I, P), P);
+	ELSE
+		BIT_LOAD_W2 := ROL(SHL(WORD#16#FFFF, N) AND ROR(I, P), P);
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : WORD;
+	LocalVaR1  : BOOL;
+	LocalVaR2 : INT;
+	LocalVar3 : INT;
+    LocalOUT  : WORD;
+  END_VAR
+
+  LocalOUT := BIT_LOAD_W2(LocalVar0, LocalVaR1 , LocalVaR2, LocalVar3);
+END_PROGRAM
+

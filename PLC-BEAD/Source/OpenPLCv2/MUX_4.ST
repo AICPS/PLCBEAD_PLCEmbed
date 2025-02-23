@@ -1,0 +1,44 @@
+FUNCTION MUX_4:BOOL
+
+	VAR_INPUT
+		D0 :	BOOL;
+		D1 :	BOOL;
+		D2 :	BOOL;
+		D3 :	BOOL;
+		A0 :	BOOL;
+		A1 :	BOOL;
+	END_VAR
+
+	IF A1 THEN
+		MUX_4 := SEL(A0, D2, D3);
+	ELSE
+		MUX_4 := SEL(A0, D0, D1);
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		D0 :	BOOL;
+		D1 :	BOOL;
+		D2 :	BOOL;
+		D3 :	BOOL;
+		A0 :	BOOL;
+		A1 :	BOOL;
+
+		OUT : BOOL;
+	END_VAR
+
+	OUT := MUX_4(D0, D1, D2, D3, A0, A1);
+	
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

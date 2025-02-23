@@ -1,0 +1,49 @@
+TYPE REAL2 :
+	
+	STRUCT
+		R1 : REAL;
+		RX : REAL;
+	END_STRUCT;
+
+END_TYPE
+
+FUNCTION_BLOCK R2_ADD2_Block
+
+	VAR_INPUT
+		X :	REAL2;
+		Y :	REAL2;
+	END_VAR
+
+	VAR_OUTPUT
+		R2_ADD2 :	REAL2;
+	END_VAR
+
+	R2_ADD2.R1 := X.R1 + Y.R1;
+	R2_ADD2.RX := X.RX + Y.RX;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+
+	VAR
+		X :	REAL2;
+		Y :	REAL2;
+
+        R2_ADD2 :	REAL2;
+		func_block : R2_ADD2_Block;
+	END_VAR
+	func_block.X := X;
+	func_block.Y := Y;
+	func_block();
+	R2_ADD2 := func_block.R2_ADD2;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+	
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

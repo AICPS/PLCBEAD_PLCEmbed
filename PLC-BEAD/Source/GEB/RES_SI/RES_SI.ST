@@ -1,0 +1,31 @@
+FUNCTION RES_SI:REAL
+
+	VAR_INPUT
+		T :	REAL;
+		_RS :	REAL;
+		TS :	REAL;
+	END_VAR
+
+	VAR
+		TX :	REAL;
+	END_VAR
+
+
+	TX := T - TS;
+	RES_SI := _RS * ( 1.0 + 7.64E-3 * TX + 1.66E-5 * TX * TX);
+
+END_FUNCTION
+
+PROGRAM program0
+
+	VAR
+		T :	REAL;
+		_RS :	REAL;
+		TS :	REAL;
+
+		OUT :	REAL;
+	END_VAR
+		OUT := RES_SI(T, _RS, TS);
+
+END_PROGRAM
+

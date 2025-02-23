@@ -1,0 +1,91 @@
+PROGRAM SHA1_MD5_DEMO
+
+	VAR
+		text :	oscat_STRING250 := 'Oscat';
+		MD5_STR :	MD5_STR;
+		SHA1_STR :	SHA1_STR;
+		hash1 :	oscat_aB0_15;
+		hash2 :	oscat_aB0_19;
+		start1 :	BOOL := TRUE;
+		start2 :	BOOL := TRUE;
+		done1 :	BOOL;
+		done2 :	BOOL;
+		SHA1_TO_STRH_1 :	SHA1_TO_STRH;
+		MD5_TO_STRH_1 :	MD5_TO_STRH;
+		md5_strh :	oscat_STRING32;
+		sha1_strh :	oscat_STRING40;
+	END_VAR
+
+	[GRA]
+	400 400 0 0 0 0 0 
+
+	[LIT]
+	3
+	55 10 56 10 0 ""
+	74 10 75 10 0 ""
+	55 14 56 14 0 ""
+
+	[TET]
+	20
+	48 9 55 11 4 5 start1
+	49 13 55 15 4 5 text
+	74 17 81 19 4 3 hash1
+	75 9 83 11 4 3 done1
+	74 13 80 15 4 3 text
+	50 44 57 46 4 5 start2
+	51 48 57 50 4 5 text
+	76 44 84 46 4 3 done2
+	76 48 82 50 4 3 text
+	49 17 56 19 4 5 hash1
+	50 52 57 54 4 5 hash2
+	46 30 53 32 4 5 hash1
+	80 30 90 32 4 3 md5_strh
+	76 52 83 54 4 3 hash2
+	46 67 53 69 4 5 hash2
+	82 67 93 69 4 3 sha1_strh
+	58 3 72 6 7 6 MD5_STR
+	55 24 78 27 7 6 MD5_TO_STRH_1
+	59 38 74 41 7 6 SHA1_STR
+	55 61 80 64 7 6 SHA1_TO_STRH_1
+
+	[FBS]
+	4
+	393274 458758 72 22 0 0 MD5_STR MD5_STR  
+	393271 1048603 78 35 0 0 MD5_TO_STRH MD5_TO_STRH_1  
+	458811 458793 74 57 0 0 SHA1_STR SHA1_STR  
+	458807 1114176 80 72 0 0 SHA1_TO_STRH SHA1_TO_STRH_1  
+
+	[FPT]
+	12
+	58 9 65 11 RUN 0 0 0 0 4225 0 @ BOOL 
+	65 9 72 11 DONE 0 0 0 1 0 4225 @ BOOL 
+	58 13 72 15 STR 0 0 0 2 128 128 @ oscat_STRING250 
+	58 17 72 19 MD5 0 0 0 2 128 128 @ oscat_aB0_15 
+	55 30 62 32 MD5 0 0 0 0 4224 0 @ oscat_aB0_15 
+	62 30 78 32 MD5_TO_STRH 0 0 0 1 0 4224 @ oscat_STRING32 
+	59 44 66 46 RUN 0 0 0 0 4225 0 @ BOOL 
+	67 44 74 46 DONE 0 0 0 1 0 4225 @ BOOL 
+	59 48 74 50 STR 0 0 0 2 128 128 @ oscat_STRING250 
+	59 52 74 54 SHA1 0 0 0 2 128 128 @ oscat_aB0_19 
+	55 67 63 69 SHA1 0 0 0 0 4224 0 @ oscat_aB0_19 
+	63 67 80 69 SHA1_TO_STRH 0 0 0 1 0 4224 @ oscat_STRING40 
+
+	[AKT]
+	0
+
+	[STT]
+	0
+
+	[TRT]
+	0
+
+	[KOT]
+	0
+
+	[VER]
+	0
+
+	[IBX]
+	0
+
+END_PROGRAM

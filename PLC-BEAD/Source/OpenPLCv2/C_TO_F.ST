@@ -1,0 +1,25 @@
+FUNCTION C_TO_F:REAL
+	VAR_INPUT
+		CELSIUS :	REAL;
+	END_VAR
+
+	C_TO_F := celsius * 1.8 + 32.0;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := C_TO_F(LocalVar0);
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

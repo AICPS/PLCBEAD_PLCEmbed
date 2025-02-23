@@ -1,0 +1,24 @@
+FUNCTION DEAD_ZONE:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		L :	REAL;
+	END_VAR
+
+	IF ABS(X) > L THEN
+		DEAD_ZONE := X;
+	ELSE
+		DEAD_ZONE := 0.0;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := DEAD_ZONE(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

@@ -1,0 +1,87 @@
+FUNCTION _DWORD_TO_REAL:REAL
+	VAR_INPUT
+		IN :	DWORD;
+	END_VAR
+
+	_DWORD_TO_REAL := UDINT_TO_REAL(DWORD_TO_UDINT(IN));
+END_FUNCTION
+
+FUNCTION SIGN_R : BOOL
+  VAR_INPUT
+    IN : REAL;
+  END_VAR
+  SIGN_R := in < 0.0;
+END_FUNCTION
+
+FUNCTION _REAL_TO_DWORD: DWORD
+
+  VAR_INPUT
+    X :	REAL;
+  END_VAR
+
+  IF REAL_TO_DWORD(0.5) = DWORD#1 THEN
+    _REAL_TO_DWORD := REAL_TO_DWORD(x);
+  ELSIF X > 0.0 THEN
+    _REAL_TO_DWORD := REAL_TO_DWORD(x+0.5); 
+  ELSIF X < 0.0 THEN 
+    _REAL_TO_DWORD := REAL_TO_DWORD(x-0.5); 
+  ELSE 
+    _REAL_TO_DWORD := DWORD#0;
+  END_IF;
+END_FUNCTION
+
+FUNCTION _BYTE_TO_INT:INT
+	VAR_INPUT
+		IN :	BYTE;
+	END_VAR
+
+	_BYTE_TO_INT := USINT_TO_INT(BYTE_TO_USINT(IN));
+END_FUNCTION
+
+FUNCTION AOUT:DWORD
+	VAR_INPUT
+		IN :	REAL;
+		BITS :	BYTE;
+		SIGN :	BYTE;
+		LOW :	REAL;
+		HIGH :	REAL;
+	END_VAR
+
+	VAR
+		in2 :	REAL;
+		sx :	BOOL;
+	END_VAR
+
+	IF sign < BYTE#32 THEN
+		sx := sign_R(in);
+		in2 := ABS(in);
+	ELSE
+		in2 := in;
+	END_IF;
+
+	in2 := LIMIT(low, in2, high);
+
+	Aout := _REAL_TO_DWORD((in2 - low) / (high - low) * (_DWORD_TO_REAL(SHL(DWORD#2#1,_BYTE_TO_INT(bits))) - 1.0)   );
+	IF sx THEN Aout := SHL(DWORD#2#1,_BYTE_TO_INT(sign)) OR Aout; END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVar1 : BYTE;
+	LocalVar2 : BYTE;
+	LocalVar3 : REAL;
+	LocalVar4 : REAL;
+	LocalOUT  : DWORD;
+  END_VAR
+  	LocalOUT := AOUT(LocalVar0, LocalVar1, LocalVar2, LocalVar3,LocalVar4);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION
+

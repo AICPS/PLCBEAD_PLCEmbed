@@ -1,0 +1,40 @@
+FUNCTION EXP10 : REAL
+  VAR_INPUT
+    X : REAL;
+  END_VAR
+
+  EXP10 := EXP(X * 2.30258509299405);
+  (* from OSCAT library; www.oscat.de  *)
+END_FUNCTION
+
+FUNCTION DEW_TEMP:REAL
+
+VAR_INPUT
+	RH :	REAL;
+	T :	REAL;
+END_VAR
+
+	VAR
+		V :	REAL;
+	END_VAR
+
+	IF rh > 0.0 THEN
+
+		V := LOG(RH * 0.01 * EXP10((7.5*T) / (237.3+T)));
+		DEW_TEMP := 237.3*V / (7.5-V);
+	ELSE
+		DEW_TEMP:= -273.15;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		RH :	REAL;
+		T :	REAL;
+		CEIL5_OUT : REAL;
+	END_VAR
+
+  	CEIL5_OUT := DEW_TEMP(RH, T);
+END_PROGRAM
+

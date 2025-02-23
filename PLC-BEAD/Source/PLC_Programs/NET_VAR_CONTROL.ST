@@ -1,0 +1,211 @@
+TYPE
+	oscat_nv_dw : ARRAY[1..8] OF DWORD;
+END_TYPE
+
+TYPE
+
+	oscat_NW_BUF_LONG  : ARRAY [0..4095] OF BYTE;
+
+	oscat_NETWORK_BUFFER :
+	STRUCT
+		SIZE   : UINT;	
+		BUFFER : oscat_NW_BUF_LONG;
+	END_STRUCT;
+
+END_TYPE
+
+TYPE oscat_NET_VAR_DATA :
+	STRUCT
+		CYCLE : UDINT;
+		STATE : BYTE;
+		INDEX : INT;
+		ID_MAX : USINT;
+		ERROR_ID : BYTE;
+		BUF_SIZE : UINT;
+		S_BUF : oscat_NETWORK_BUFFER;
+		R_BUF : oscat_NETWORK_BUFFER;
+	END_STRUCT;
+END_TYPE
+
+FUNCTION_BLOCK NET_VAR_CONTROL_Block
+
+	VAR_INPUT
+		ACTIVATE :	BOOL;
+		MASTER :	BOOL;
+		UDP :	BOOL;
+		REMOTE_IP4 :	DWORD;
+		REMOTE_PORT :	WORD := WORD#10000;
+		SCAN_TIME :	TIME := T#1s;
+		WATCHDOG :	TIME := T#2s;
+	END_VAR
+
+
+	VAR_OUTPUT
+		RUN :	BOOL;
+		ERROR :	DWORD;
+	END_VAR
+
+
+	VAR_IN_OUT
+		X :	oscat_NET_VAR_DATA;
+	END_VAR
+
+	VAR
+		IPC :	IP_CONTROL;
+		IP_C :	oscat_IP_C;
+		step :	INT;
+		activate_last :	BOOL;
+		tscan :	TON;
+		reset :	BOOL;
+	END_VAR
+
+	IF X.ERROR_ID > BYTE#0 THEN
+		X.STATE := BYTE#0;
+		ERROR := BYTE_TO_DWORD(X.ERROR_ID);
+		X.ERROR_ID := BYTE#0;
+		step := 999;
+	END_IF;
+
+	CASE step OF
+
+	00:	IF ACTIVATE AND NOT activate_last OR reset THEN
+			IF MASTER THEN
+				IP_C.C_MODE := BYTE#0;
+				step := 100;
+			ELSE
+				IP_C.C_MODE := BYTE#2;
+				step := 200;
+			END_IF;
+			IF UDP THEN IP_C.C_MODE := IP_C.C_MODE OR BYTE#1; END_IF;
+
+			IP_C.C_PORT := REMOTE_PORT; 
+			IP_C.C_IP := REMOTE_IP4; 
+			IP_C.TIME_RESET := TRUE; 
+			IP_C.C_ENABLE := TRUE;
+			IP_C.R_OBSERVE := TRUE; 
+			X.S_BUF.SIZE := UINT#0;
+			X.R_BUF.SIZE := UINT#0;
+			X.CYCLE := UDINT#0;
+			X.ERROR_ID := BYTE#0;
+			reset := FALSE;
+		END_IF;
+
+	100:IF IP_C.C_STATE > BYTE#127 THEN
+			X.STATE := BYTE#1; 
+			X.BUF_SIZE := UINT#4096;
+			X.S_BUF.BUFFER[0] := UDINT_TO_BYTE(X.CYCLE);
+			X.INDEX := 1;
+			step := 110;
+		END_IF;
+
+	110:X.STATE := BYTE#0;
+		X.S_BUF.SIZE := INT_TO_UINT(X.INDEX);
+		step := 120;
+
+	120:IF X.S_BUF.SIZE = UINT#0 AND X.R_BUF.SIZE >= UINT#1 THEN 
+			X.STATE := BYTE#2; 
+			X.BUF_SIZE := X.R_BUF.SIZE;
+			X.INDEX := 1;
+			X.ERROR_ID := BYTE#0;
+			X.CYCLE := X.CYCLE + UDINT#1;
+			ERROR := DWORD#0;
+			RUN := TRUE;
+			step := 130;
+		END_IF;
+
+	130:X.STATE := BYTE#0;
+		X.R_BUF.SIZE := UINT#0;
+		IF NOT ACTIVATE THEN
+			step := 999; 
+		ELSIF tscan.Q THEN
+			step := 100;
+		END_IF;
+
+	200:IF X.R_BUF.SIZE >= UINT#1 THEN
+			X.STATE := BYTE#2;
+			X.BUF_SIZE := X.R_BUF.SIZE;
+			X.INDEX := 1;
+			step := 210;
+		END_IF;
+
+	210:X.STATE := BYTE#1;
+		X.BUF_SIZE := UINT#4096;
+		X.S_BUF.BUFFER[0] := X.R_BUF.BUFFER[0];
+		X.INDEX := 1;
+		X.R_BUF.SIZE := UINT#0;
+		step := 220;
+
+	220:X.STATE := BYTE#0;
+		X.S_BUF.SIZE := INT_TO_UINT(X.INDEX);
+		step := 230;
+
+	230:IF X.S_BUF.SIZE = UINT#0 THEN
+			ERROR := DWORD#0; 
+			RUN := TRUE;
+			IF NOT ACTIVATE THEN
+				step := 999;
+			ELSE
+				step := 200;
+			END_IF;
+		END_IF;
+
+	999:IP_C.C_ENABLE := FALSE;
+		RUN := FALSE;
+		step := 0;
+
+	END_CASE;
+
+	IPC(IP:= DWORD#0, PORT:= WORD#0 , TIME_OUT:= WATCHDOG, IP_C:= IP_C, S_BUF:= X.S_BUF, R_BUF:= X.R_BUF);
+	X.R_BUF := IPC.R_BUF;
+	X.S_BUF := IPC.S_BUF;
+	IP_C    := IPC.IP_C;
+
+	IF IP_C.ERROR > DWORD#0 THEN
+		ERROR := IP_C.ERROR;
+		RUN := FALSE;
+		reset := TRUE;
+		step := 0;
+	END_IF;
+
+	ACTIVATE_LAST := ACTIVATE; 
+	tscan(IN:= step <> 110 ,PT:=SCAN_TIME);
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+	VAR
+		ACTIVATE :	BOOL;
+		MASTER :	BOOL;
+		UDP :	BOOL;
+		REMOTE_IP4 :	DWORD;
+		REMOTE_PORT :	WORD := WORD#10000;
+		SCAN_TIME :	TIME := T#1s;
+		WATCHDOG :	TIME := T#2s;
+		RUN :	BOOL;
+		ERROR :	DWORD;
+		X :	oscat_NET_VAR_DATA;
+
+		func_block : NET_VAR_CONTROL_Block;
+	END_VAR
+	func_block.ACTIVATE := ACTIVATE;
+	func_block.MASTER := MASTER;
+	func_block.UDP := UDP;
+	func_block.REMOTE_IP4 := REMOTE_IP4;
+	func_block.REMOTE_PORT := REMOTE_PORT;
+	func_block.SCAN_TIME := SCAN_TIME;
+	func_block.WATCHDOG := WATCHDOG;
+	func_block.X := X;
+
+	func_block();
+  	RUN  := func_block.RUN;
+	ERROR  := func_block.ERROR;
+	X  := func_block.X;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

@@ -1,0 +1,36 @@
+FUNCTION RES_PT:REAL
+	VAR_INPUT
+		T :	REAL;
+		R0 :	REAL;
+	END_VAR
+
+	VAR
+		T2 :	REAL;
+	END_VAR
+
+	T2 := T * T;
+
+	IF T >= 0.0 THEN
+		RES_PT := R0 * ( 1.0 + 3.90802E-3 * T + -5.802E-7 * T2);
+	ELSE
+		RES_PT := R0 * ( 1.0 + 3.90802E-3 * T + -5.802E-7 * T2 + -4.27350E-12 * (T - 100.0) * T2 * T);
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  	VAR
+		T :	REAL;
+		R0 : REAL;
+		CEIL5_OUT : REAL;
+  	END_VAR
+
+  	CEIL5_OUT := RES_PT(T, R0);
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

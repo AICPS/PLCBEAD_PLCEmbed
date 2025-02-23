@@ -1,0 +1,18 @@
+FUNCTION CONE_V:REAL
+	VAR_INPUT
+		RX :	REAL;
+		HX :	REAL;
+	END_VAR
+
+	CONE_V := 1.047197551 * RX * RX * HX;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := CONE_V(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

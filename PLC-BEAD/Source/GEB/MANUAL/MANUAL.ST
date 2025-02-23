@@ -1,0 +1,26 @@
+FUNCTION MANUAL:BOOL
+
+	VAR_INPUT
+		_IN :	BOOL;
+		_ON :	BOOL;
+		OFF :	BOOL;
+	END_VAR
+
+	MANUAL := NOT OFF AND (_IN OR _ON);
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		_IN :	BOOL;
+		_ON :	BOOL;
+		OFF :	BOOL;
+
+		OUT : BOOL;
+	END_VAR
+
+	OUT := MANUAL(_IN, _ON, OFF);
+	
+END_PROGRAM
+
+

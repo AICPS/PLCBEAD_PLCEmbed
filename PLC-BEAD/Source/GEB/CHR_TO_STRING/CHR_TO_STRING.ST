@@ -1,0 +1,24 @@
+FUNCTION_BLOCK CHR_TO_STRING_Block
+	VAR_INPUT
+		C :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		CHR_TO_STRING :	STRING;
+	END_VAR
+
+	CHR_TO_STRING := BYTE_TO_STRING(C);
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : BYTE;
+	LocalOUT  : STRING;
+	func_block : CHR_TO_STRING_Block;
+  END_VAR
+	func_block.C  := LocalVar0;
+	func_block();
+	LocalOUT := func_block.CHR_TO_STRING;
+END_PROGRAM
+

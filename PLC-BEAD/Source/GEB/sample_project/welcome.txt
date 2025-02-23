@@ -1,0 +1,21 @@
+Welcome to GEB Automation IDE v3
+IEC 61131-3 to C compiler
+
+This is a sample project, included in GEB IDE for demonstration purposes.
+It can be safely deleted, including this file. 
+Instructions for compiling and running the project: open readme.txt file
+
+To open the included closed projects, right-click over them and select "Open project"
+
+To get help about the IDE: 
+  - select menu "Help/Help Contents/GEB Automation IDE Guide"
+  - or browse to https://www.gebautomation.com/
+ 
+General support and comments: support@gebautomation.com
+Sales: sales@gebautomation.com
+
+Copyright (C) GEB Automation LLC  https://www.gebautomation.com/
+All rights reserved  - Unauthorized distribution or copying is strictly forbidden.
+Details about licensing terms see file EULA.txt at root installation directory
+or browse to https://www.gebautomation.com/help/topic/com.gebautomation.help/html/EULA.txt
+

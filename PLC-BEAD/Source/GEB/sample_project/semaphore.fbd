@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.gebautomation.graphmodel:Pou xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.gebautomation.graphmodel="http:///com/gebautomation/graphmodel/ladder.ecore" name="semaphore" lang="fbd" datatype="" modelVersion="3">
+  <body name="">
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="SE" position="48;156" size="94;24" localId="150">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="R_TRIG" position="192;144" size="74;36" localId="104" fb="true">
+      <connsOut name="Q" y="24"/>
+      <connsIn name="CLK" y="24">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="39977"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="F_TRIG" position="192;252" size="73;36" localId="179" fb="true">
+      <connsOut name="Q" y="24"/>
+      <connsIn name="CLK" y="24">
+        <links src="//@body.0/@gnodes.3/@connsOut.0" linkId="63849"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="SI" position="48;264" size="92;24" localId="100">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="AND" position="300;144" size="60;60" localId="184" firstExtensibleArg="IN1">
+      <connsOut y="24"/>
+      <connsIn name="IN1" y="24" flag="E">
+        <links src="//@body.0/@gnodes.1/@connsOut.0" linkId="89085"/>
+      </connsIn>
+      <connsIn name="IN2" y="36" flag="E">
+        <links src="//@body.0/@gnodes.3/@connsOut.0" linkId="47106"/>
+      </connsIn>
+      <connsIn name="IN3" y="48" flag="E"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="AND" position="300;240" size="60;60" localId="103">
+      <connsOut y="24"/>
+      <connsIn name="IN1" y="24" flag="E">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="81764"/>
+      </connsIn>
+      <connsIn name="IN2" y="36" flag="E">
+        <links src="//@body.0/@gnodes.2/@connsOut.0" linkId="27784"/>
+      </connsIn>
+      <connsIn name="IN3" y="48" flag="E"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="OR" position="408;180" size="60;60" localId="192" firstExtensibleArg="IN1">
+      <connsOut y="24"/>
+      <connsIn name="IN1" y="24" flag="E">
+        <links src="//@body.0/@gnodes.4/@connsOut.0" linkId="71614"/>
+      </connsIn>
+      <connsIn name="IN2" y="36" flag="E">
+        <links src="//@body.0/@gnodes.5/@connsOut.0" linkId="47494"/>
+      </connsIn>
+      <connsIn name="IN3" y="48" flag="E"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="TOF" position="564;180" size="60;48" localId="125" fb="true">
+      <connsOut name="Q" y="24"/>
+      <connsOut name="ET" y="36"/>
+      <connsIn name="IN" y="24">
+        <links src="//@body.0/@gnodes.6/@connsOut.0" linkId="34570"/>
+      </connsIn>
+      <connsIn name="PT" y="36">
+        <links src="//@body.0/@gnodes.11/@connsOut.0" linkId="23569">
+          <bendPoints>553;216</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="372;96" size="121;61" localId="151" comment="Impulse if rising-edge of SensorExt , &#xD;&#xA;and SensorInt=1"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="360;276" size="109;61" localId="158" comment="Impulse if falling-edge of SensorInt,&#xD;&#xA;and SensorExt=1"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:VarRef" name="L1" position="660;192" size="73;24" localId="176">
+      <connsIn y="12">
+        <links src="//@body.0/@gnodes.7/@connsOut.0" linkId="52366"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="T#5s" position="456;228" size="97;24" localId="112">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="36;0" size="565;73" localId="137" comment="Two sensors in a parking lot detect when a car passes towards the outdoor, and lights a warning for 5 seconds.&#xD;&#xA;The sensors are ON (TRUE,1) when oclusion is detected.&#xD;&#xA;The upper sensor is the &quot;external&quot; one - the closest to the door. The light turns on (for 5 seconds) for either &#xD;&#xA;a rising edge on the external with the internal ON, or a falling edge in the internal with the external ON."/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="48;96" size="97;49" localId="177" comment="External Sensor&#xD;&#xA;%IX54.1"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="48;288" size="85;37" localId="138" comment="%IX54.2&#xD;&#xA;Internal Sensor"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="660;132" size="61;49" localId="175" comment="Light&#xD;&#xA;%QX55.1"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="TIME_TO_REAL" position="504;300" size="117;36" localId="122">
+      <connsOut y="24"/>
+      <connsIn name="IN" y="24">
+        <links src="//@body.0/@gnodes.7/@connsOut.1" linkId="27576">
+          <bendPoints>642;216</bendPoints>
+          <bendPoints>642;270</bendPoints>
+          <bendPoints>504;270</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:VarRef" name="T1" position="732;312" size="73;24" localId="153">
+      <connsIn y="12">
+        <links src="//@body.0/@gnodes.18/@connsOut.0" linkId="91788"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="TRUNC_INT" position="624;300" size="95;36" localId="128">
+      <connsOut y="24"/>
+      <connsIn name="IN" y="24">
+        <links src="//@body.0/@gnodes.16/@connsOut.0" linkId="74653"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="720;276" size="61;24" localId="130" comment="%QW62.1"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="192;96" size="73;37" localId="172" comment="Rising-edge detector"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="192;288" size="73;37" localId="155" comment="Falling-edge detector"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="60;360" size="745;97" localId="193" comment="To test this: &#xD;&#xA;Run in the simulator (Run -> Debug As -> IEC 61131), with cycles=0 (infinite loop), 200msecs per cycle.&#xD;&#xA;Emulate a car that goes towards the outdoor by writing the I/O variables (left pane) in the following order:&#xD;&#xA;1. set IX54.2  (inner barrier, turns red)&#xD;&#xA;2. set  IX54.1 (outer barrier, turns red)&#xD;&#xA;You should see (both in the diagram and in the digital output %QX55.1) that the output light activates during 5 seconds.&#xD;&#xA;&#xD;&#xA;"/>
+  </body>
+  <pouInterface>
+    <vars name="L1" datatype="BOOL" at="%QX55.1" comment="Light"/>
+    <vars name="SE" datatype="BOOL" at="%IX54.1" comment="External sensor"/>
+    <vars name="SI" datatype="BOOL" at="%IX54.2" comment="Internal sensor"/>
+    <vars name="T1" datatype="INT" at="%QW62.1" comment="Time in msecs"/>
+  </pouInterface>
+</com.gebautomation.graphmodel:Pou>

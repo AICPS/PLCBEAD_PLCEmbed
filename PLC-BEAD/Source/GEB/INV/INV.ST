@@ -1,0 +1,20 @@
+FUNCTION INV:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	IF X <> 0.0 THEN INV := 1.0 / X; END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		X :	REAL;
+		OUT : REAL;
+	END_VAR
+
+	OUT := INV(X);
+END_PROGRAM
+
+

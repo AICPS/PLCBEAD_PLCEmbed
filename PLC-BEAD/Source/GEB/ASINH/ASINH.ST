@@ -1,0 +1,17 @@
+FUNCTION ASINH:REAL
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	ASINH := LN(SQRT(X * X + 1.0)+X);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := ASINH(LocalVar0);
+END_PROGRAM
+

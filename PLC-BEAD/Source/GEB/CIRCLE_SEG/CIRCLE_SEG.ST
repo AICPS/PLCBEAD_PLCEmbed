@@ -1,0 +1,21 @@
+FUNCTION CIRCLE_SEG:REAL
+	VAR_INPUT
+		RX :	REAL;
+		HX :	REAL;
+	END_VAR
+
+	IF RX > 0.0 THEN
+		CIRCLE_SEG := 2.0 * ACOS(1.0 - LIMIT(0.0, HX / RX, 2.0));
+		CIRCLE_SEG := (CIRCLE_SEG - SIN(CIRCLE_SEG)) * RX * RX * 0.5;
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := CIRCLE_SEG(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

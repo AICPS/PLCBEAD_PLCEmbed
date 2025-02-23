@@ -1,0 +1,28 @@
+FUNCTION RES_NI:REAL
+
+	VAR_INPUT
+		T :	REAL;
+		R0 :	REAL;
+	END_VAR
+
+	VAR
+		T2 :	REAL;
+	END_VAR
+
+	T2 := T*T;
+	Res_NI := R0 + 0.5485*T + 0.665E-3*T2 + 2.805E-9*T2*T2;
+
+END_FUNCTION
+
+PROGRAM program0
+
+	VAR
+		T :	REAL;
+		R0 :	REAL;
+
+		OUT :	REAL;
+	END_VAR
+	OUT := RES_NI(T, R0);
+
+END_PROGRAM
+

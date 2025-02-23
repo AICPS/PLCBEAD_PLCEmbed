@@ -1,0 +1,34 @@
+FUNCTION SCALE:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		K :	REAL;
+		O :	REAL;
+		MX :	REAL;
+		MN :	REAL;
+	END_VAR
+
+	SCALE := LIMIT(MN, X * K + O, MX);
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    X :	REAL;
+	K :	REAL;
+	O :	REAL;
+	MX :	REAL;
+	MN :	REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := SCALE(X, K, O, MX, MN);
+END_PROGRAM
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

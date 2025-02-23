@@ -1,0 +1,42 @@
+TYPE
+	oscat_PT_ARRAY: ARRAY [1..100] OF REAL;
+END_TYPE
+
+FUNCTION_BLOCK ARRAY_SUM_Block
+	VAR_IN_OUT
+		PT :	oscat_PT_ARRAY;
+	END_VAR
+
+	VAR_INPUT
+		SIZE :	UINT;
+	END_VAR
+
+	VAR_OUTPUT
+		ARRAY_SUM :	REAL;
+	END_VAR
+
+	VAR
+		i :	INT;
+		STOP :	INT;
+	END_VAR
+
+	STOP :=LIMIT_INT(1,UINT_TO_INT(SIZE),1000);
+
+	ARRAY_SUM := PT[1];
+	FOR i := 2 TO STOP DO
+		ARRAY_SUM := ARRAY_SUM + PT[i];
+	END_FOR;
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : oscat_PT_ARRAY;
+    LocalVaR1  : UINT;
+	LocalOUT  : REAL;
+	func_block : ARRAY_SUM_Block;
+  END_VAR
+	func_block(PT := LocalVar0,SIZE := LocalVaR1 );
+	LocalOUT := func_block.ARRAY_SUM;
+
+END_PROGRAM
+

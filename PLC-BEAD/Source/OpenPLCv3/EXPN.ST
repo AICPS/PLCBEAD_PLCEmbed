@@ -1,0 +1,53 @@
+
+FUNCTION BIT_OF_DWORD : BOOL
+  VAR_INPUT
+    IN : DWORD;
+    N : INT;
+  END_VAR
+
+  BIT_OF_DWORD := (SHR(in,N) AND 16#00000001) > 0;
+END_FUNCTION
+
+FUNCTION EXPN:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		N :	INT;
+	END_VAR
+
+	VAR
+		N_word :	WORD;
+		X_tmp :	REAL;
+		sign :	BOOL;
+	END_VAR
+
+	N_word := INT_TO_WORD(N);
+	X_tmp := X;
+	sign := BIT_OF_DWORD(WORD_TO_DWORD(N_word),15);
+	N_word := INT_TO_WORD(ABS(N));
+	IF BIT_OF_DWORD(WORD_TO_DWORD(N_word),0) THEN expn := X_tmp; ELSE expn := 1.0; END_IF;    (* N_word.X0 *)
+	N_word := SHR(N_word,1);
+	WHILE N_word > WORD#0 DO
+		X_tmp := X_tmp * X_tmp;
+		IF BIT_OF_DWORD(WORD_TO_DWORD(N_word),0) THEN expn := expn * X_tmp; END_IF;       (* N_word.X0 *)
+		N_word := SHR(N_word,1);
+	END_WHILE;
+	IF sign THEN EXPN := 1.0 / EXPN; END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVar1 : INT;
+	LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := EXPN(LocalVar0, LocalVar1);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

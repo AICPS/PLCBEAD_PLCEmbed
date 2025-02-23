@@ -1,0 +1,23 @@
+FUNCTION BIT_OF_DWORD : BOOL
+  VAR_INPUT
+    IN : DWORD;
+    N : INT;
+  END_VAR
+
+  BIT_OF_DWORD := (SHR(IN,N) AND 16#00000001) > 0;
+END_FUNCTION
+
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+    LocalVaR2 : INT;
+    LocalVaR1  : BOOL;
+    CEIL5_OUT : BOOL;
+  END_VAR
+
+  CEIL5_OUT := BIT_OF_DWORD(LocalVar0, LocalVaR2);
+  LocalVaR1  := CEIL5_OUT;
+END_PROGRAM
+
+

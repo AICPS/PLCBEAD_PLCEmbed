@@ -1,0 +1,30 @@
+FUNCTION_BLOCK DEC_TO_INT
+	VAR_INPUT
+		DEC :		STRING;
+	END_VAR
+
+	VAR_OUTPUT
+		DEC_TO_INT :	INT;
+	END_VAR
+
+	VAR
+		i :	INT;
+		X :	INT;
+		sign :	BOOL;
+		stop :	INT;
+	END_VAR
+
+	DEC_TO_INT := 0;
+	sign := FALSE;
+	stop := LEN(dec);
+	FOR I := 1 TO stop DO
+		X := GET_CHAR(DEC,I);
+		IF X > 47 AND X < 58 THEN
+			DEC_TO_INT := DEC_TO_INT * 10 + X - 48;
+		ELSIF X = 45 AND DEC_TO_INT = 0 THEN
+			sign := TRUE;
+		END_IF;
+	END_FOR;
+	IF sign THEN DEC_TO_INT := -DEC_TO_INT; END_IF;
+
+END_FUNCTION_BLOCK

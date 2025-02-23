@@ -1,0 +1,31 @@
+FUNCTION DEC1:INT
+
+	VAR_INPUT
+		X :	INT;
+		N :	INT;
+	END_VAR
+
+	IF X = 0 THEN
+		DEC1 := N - 1;
+	ELSE
+		DEC1 := X - 1;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : INT;
+	LocalVar1 : INT;
+	LocalOUT  : INT;
+  END_VAR
+  	LocalOUT := DEC1(LocalVar0, LocalVar1);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION
+

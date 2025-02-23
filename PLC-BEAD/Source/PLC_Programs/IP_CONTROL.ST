@@ -1,0 +1,354 @@
+FUNCTION_BLOCK IP_CONTROL_Block
+
+  VAR
+    T_PLC_MS :	T_PLC_MS;
+    IP4_TO_STRING :	IP4_TO_STRING;
+    FB_IP_CONNECT :	IP_CONNECT;
+    FB_IP_URCV :	IP_URCV;
+    FB_IP_USEND :	IP_USEND;
+  END_VAR
+
+  VAR_INPUT
+    IP :	DWORD;
+    PORT :	WORD;
+    TIME_OUT :	TIME;
+  END_VAR
+
+
+  VAR_IN_OUT
+    IP_C :	oscat_IP_C;
+    S_BUF :	oscat_NETWORK_BUFFER;
+    R_BUF :	oscat_NETWORK_BUFFER;
+  END_VAR
+
+  VAR
+    C_TIME :	UDINT;
+    S_TIME :	UDINT;
+    R_TIME :	UDINT;
+    C_ENABLE :	BOOL;
+    C_IP :	DWORD;
+    C_PORT :	WORD;
+    C_MODE :	BYTE;
+    C_ERROR :	BOOL;
+    C_STATUS :	INT;
+    C_ID :	INT;
+    C_RECONNECT :	BOOL;
+    C_RECONNECT_COUNT :	INT;
+    S_BUF_I :	oscat_NETWORK_BUFFER_SHORT;
+    S_TOTAL :	INT;
+    S_CUR_POS :	INT;
+    S_CUR_SIZE :	INT;
+    S_MAX_SIZE :	INT := 1408;
+    S_START :	BOOL;
+    S_REQ :	BOOL;
+    S_DONE :	BOOL;
+    S_ERROR :	BOOL;
+    S_STATUS :	INT;
+    R_NDR :	BOOL;
+    R_ERROR :	BOOL;
+    R_STATUS :	INT;
+    R_BUF_I :	oscat_NETWORK_BUFFER_SHORT;
+    R_COUNT :	INT;
+    R_OFFSET :	INT;
+    R_E_MAX_SIZE :	INT := 4096;
+    NEW_CONNECTION :	BOOL;
+    C_ENABLE_OLD :	BOOL;
+    C_READY :	BOOL;
+    C_READY_OLD :	BOOL;
+    DELAY_STOP :	UDINT;
+    DELAY :	UDINT;
+    DELAY_VALUE :	UDINT;
+    C :	INT;
+    C2 :	INT;
+    C3 :	INT;
+    CS :	STRING;
+    TX :	UDINT;
+    ERROR_TIME :	UDINT;
+    S_ACTIVE :	BOOL;
+    ERROR_CON :	BYTE;
+    ERROR_SND :	BYTE;
+    ERROR_RCV :	BYTE;
+  END_VAR
+
+  T_PLC_MS();
+  TX := T_PLC_MS.T_PLC_MS;
+
+  IF (TX - DELAY < DELAY_VALUE) THEN
+    IF IP_C.C_STATE <> BYTE#1 AND IP_C.C_STATE <> BYTE#254 THEN 
+    RETURN;
+    END_IF;
+  END_IF;
+  DELAY := TX;
+
+  IF C_ENABLE AND DELAY_VALUE > UDINT#00 THEN
+    IF (TX - DELAY_STOP > UDINT#1000) THEN 
+      DELAY_VALUE := UDINT#00;
+    END_IF;
+  ELSE
+    DELAY_STOP := TX; 
+  END_IF;
+
+  IF IP_C.C_PORT = WORD#00 THEN
+    IP_C.C_PORT := PORT;
+  END_IF;
+  IF IP_C.C_IP=DWORD#00 AND IP_C.C_MODE<BYTE#4 THEN
+    IP_C.C_IP := IP;
+  END_IF;
+
+  NEW_CONNECTION := C_IP <> IP_C.C_IP OR C_MODE <> IP_C.C_MODE OR C_PORT <> IP_C.C_PORT;
+
+  IF IP_C.C_ENABLE AND NOT C_READY AND NEW_CONNECTION THEN
+
+    C_IP   := IP_C.C_IP; 
+    C_MODE := IP_C.C_MODE;
+    C_PORT := IP_C.C_PORT;
+
+    CS := SEL_STRING((C_MODE AND BYTE#1) = BYTE#1,'','/UDP');
+    CS := CONCAT(CS,SEL_STRING(C_MODE<BYTE#2,' /PASSIVE',' /ACTIVE'));
+    CS := CONCAT(CS,' /PORT=');
+    CS := CONCAT(CS,WORD_TO_STRING(C_PORT,'%u'));
+
+    IF C_MODE<BYTE#4 THEN 
+      IP4_TO_STRING(IP4:=C_IP);  
+      CS := CONCAT(CS,' /IP=');
+      CS := CONCAT(CS,IP4_TO_STRING.IP4_TO_STRING);
+    END_IF;
+
+    ERROR_TIME := MAX(UDINT#200,TIME_TO_UDINT2(TIME_OUT));
+    IP_C.TIME_RESET := TRUE; 
+  END_IF;
+
+  C_ENABLE := IP_C.C_ENABLE AND NOT C_RECONNECT AND NOT NEW_CONNECTION AND IP_C.ERROR = DWORD#0;
+
+  FB_IP_CONNECT.EN_C    := C_ENABLE;  
+  FB_IP_CONNECT.PARTNER := CS;
+  FB_IP_CONNECT(); 
+  C_READY  := FB_IP_CONNECT.VALID;
+  C_ERROR  := FB_IP_CONNECT.ERROR;
+  C_STATUS := FB_IP_CONNECT.STATUS;
+  C_ID     := FB_IP_CONNECT.ID;
+
+  IF C_ENABLE THEN
+    IF NOT C_ENABLE_OLD THEN
+      DELAY_VALUE := UDINT#50;  
+    END_IF;
+  ELSE
+    IF C_ENABLE_OLD THEN
+      C_RECONNECT := FALSE;
+      DELAY_VALUE := UDINT#50; 
+    END_IF;
+  END_IF;
+
+  C_ENABLE_OLD := C_ENABLE;
+
+  IF C_READY THEN
+    IF NOT C_READY_OLD THEN
+      IP_C.C_STATE := BYTE#254;
+      DELAY_VALUE := UDINT#50; 
+      IP_C.TIME_RESET := TRUE;  
+    
+    ELSE
+      IP_C.C_STATE := BYTE#255; 
+    END_IF;
+  ELSE
+    IF C_READY_OLD THEN
+      IP_C.C_STATE := BYTE#1;
+    IP_C.MAILBOX[1] := BYTE#0; 
+    IP_C.MAILBOX[2] := BYTE#0;
+    IP_C.MAILBOX[3] := BYTE#0;
+      DELAY_VALUE := UDINT#50;  
+
+      IF NOT NEW_CONNECTION THEN
+        S_ACTIVE := FALSE;        
+        S_REQ := FALSE;        
+        S_BUF.SIZE := UINT#0;    
+      END_IF;
+    ELSE
+      IP_C.C_STATE := BYTE#000;
+    END_IF;
+  END_IF;
+
+  C_READY_OLD := C_READY;
+
+  C := 1;
+  IF S_BUF.SIZE > UINT#0 THEN
+    IF C_READY AND C_ENABLE THEN
+      IF S_ACTIVE = FALSE AND IP_C.MAILBOX[2] = BYTE#0 THEN
+        S_TOTAL := LIMIT_INT(0,UINT_TO_INT(S_BUF.SIZE),R_E_MAX_SIZE);
+        S_CUR_POS  := 0;
+        S_CUR_SIZE := 0;
+        S_START := TRUE;      
+        S_ACTIVE := TRUE;   
+      END_IF;
+
+      IF S_DONE OR S_START THEN
+
+        S_START := FALSE;
+        S_CUR_POS := S_CUR_POS + S_CUR_SIZE;             
+        IF S_TOTAL > S_CUR_POS THEN                     
+          S_CUR_SIZE := S_TOTAL - S_CUR_POS;
+          S_CUR_SIZE:=LIMIT_INT(0,S_CUR_SIZE,S_MAX_SIZE);
+
+          C2 := S_CUR_POS;
+      C3 := S_CUR_SIZE - 1;
+      FOR C := 0 TO C3 DO 
+            S_BUF_I.BUFFER[C] := S_BUF.BUFFER[C2];
+        C2 := C2 + 1;
+          END_FOR;
+          S_BUF_I.SIZE := INT_TO_UINT(S_CUR_SIZE);
+        S_TIME := tx; 
+          R_TIME := tx; 
+          S_REQ := TRUE;
+          C := 0;
+        ELSE
+          S_REQ := FALSE;
+          S_BUF.SIZE := UINT#0;
+          S_ACTIVE := FALSE;
+        END_IF;
+      END_IF;
+    END_IF;
+  END_IF;
+
+  FOR C2 := C TO 1 DO
+    FB_IP_USEND.REQ    := S_REQ AND C2=1;
+    FB_IP_USEND.ID     := C_ID;
+    FB_IP_USEND.R_ID   := '';
+    FB_IP_USEND.SD_1   := S_BUF_I;
+    FB_IP_USEND();
+    S_DONE   := FB_IP_USEND.DONE;
+    S_ERROR  := FB_IP_USEND.ERROR;
+    S_STATUS := FB_IP_USEND.STATUS;
+    S_BUF_I  := FB_IP_USEND.SD_1;
+  END_FOR;
+
+  FB_IP_URCV.EN_R := C_READY AND NOT S_ACTIVE AND IP_C.MAILBOX[3] = BYTE#0; 
+  FB_IP_URCV.ID   := C_ID;
+  FB_IP_URCV.R_ID := '';
+  FB_IP_URCV.RD_1 := R_BUF_I;
+  FB_IP_URCV();
+  R_NDR    := FB_IP_URCV.NDR;
+  R_ERROR  := FB_IP_URCV.ERROR;
+  R_STATUS := FB_IP_URCV.STATUS;
+  R_BUF_I  := FB_IP_URCV.RD_1;
+
+  IF R_NDR THEN
+    IF R_BUF.SIZE >= INT_TO_UINT(R_E_MAX_SIZE) THEN
+      R_BUF.SIZE := UINT#0;
+      r_status := 254; 
+    END_IF;
+
+    R_TIME := tx; 
+    R_COUNT := UINT_TO_INT(R_BUF_I.SIZE); 
+    R_OFFSET := UINT_TO_INT(R_BUF.SIZE);
+
+    IF (C_MODE AND BYTE#2#0000_0001) = BYTE#1 THEN
+      r_offset := 0;
+    ELSE
+      R_OFFSET := UINT_TO_INT(R_BUF.SIZE);
+    END_IF;
+
+    IF R_OFFSET + R_COUNT > R_E_MAX_SIZE THEN
+      R_COUNT := R_E_MAX_SIZE - R_OFFSET;
+    END_IF;
+
+    C2 := R_OFFSET;
+    C3 := R_COUNT - 1;
+    FOR C := 0 TO C3 DO
+      R_BUF.BUFFER[C2] := R_BUF_I.BUFFER[C];
+      C2 := C2 + 1;
+    END_FOR;
+  
+    R_BUF.SIZE := INT_TO_UINT(R_OFFSET + R_COUNT); 
+    IP_C.MAILBOX[1] := USINT_TO_BYTE(BYTE_TO_USINT(IP_C.MAILBOX[1]) + USINT#1);
+    IF IP_C.MAILBOX[1] = BYTE#0 THEN IP_C.MAILBOX[1] := BYTE#1; END_IF;
+
+  END_IF;
+
+  IF IP_C.TIME_RESET THEN    
+    IP_C.TIME_RESET := FALSE; 
+    C_RECONNECT_COUNT := 0; 
+    C_TIME := tx;            
+    S_TIME := tx;            
+    R_TIME := tx;          
+
+    ERROR_CON := BYTE#0;		
+    ERROR_SND := BYTE#0;		
+    ERROR_RCV := BYTE#0;		
+  END_IF;
+
+  IF IP_C.R_OBSERVE = FALSE OR s_active THEN
+      R_TIME := tx;
+  END_IF;
+
+  C_RECONNECT := FALSE;
+
+  IF ERROR_CON = BYTE#0 THEN
+    IF C_ERROR THEN 
+    IF C_STATUS = 16#31 THEN
+      ERROR_CON := BYTE#253;
+    ELSE
+      ERROR_CON := INT_TO_BYTE(C_STATUS);
+    END_IF;
+    ELSIF TX - C_TIME > ERROR_TIME AND C_ENABLE AND NOT C_READY AND C_MODE < BYTE#2 THEN 
+      IF C_RECONNECT_COUNT >= 3 THEN
+        ERROR_CON := BYTE#255; 
+      ELSE
+        C_TIME := TX; 
+        C_RECONNECT_COUNT := C_RECONNECT_COUNT + 1;
+        C_RECONNECT := TRUE;
+
+      END_IF;
+    END_IF;
+  END_IF;
+
+  IF ERROR_SND = BYTE#0 THEN
+    IF S_ERROR AND S_STATUS <> 16#65 THEN
+      ERROR_SND := INT_TO_BYTE(S_STATUS);
+    ELSIF TX - S_TIME > ERROR_TIME AND S_ACTIVE THEN
+      ERROR_SND := BYTE#255; 
+    END_IF;
+  END_IF;
+
+  IF ERROR_RCV = BYTE#0 THEN
+    IF R_ERROR AND (R_STATUS <> 16#33) AND (R_STATUS <> 16#31) AND (R_STATUS <> 16#65) THEN 
+      ERROR_RCV := INT_TO_BYTE(R_STATUS);
+    ELSIF TX - R_TIME > ERROR_TIME AND C_READY AND IP_C.R_OBSERVE THEN
+      ERROR_RCV := BYTE#255;
+    END_IF;
+  END_IF;
+
+  IP_C.ERROR := DWORD_OF_BYTE(ERROR_CON,ERROR_SND,ERROR_RCV,BYTE#0);
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+	VAR
+		IP :	DWORD;
+    PORT :	WORD;
+    TIME_OUT :	TIME;
+    IP_C :	oscat_IP_C;
+    S_BUF :	oscat_NETWORK_BUFFER;
+    R_BUF :	oscat_NETWORK_BUFFER;
+
+		func_block : IP_CONTROL_Block;
+	END_VAR
+	func_block.IP := IP;
+	func_block.PORT := PORT;
+	func_block.TIME_OUT := TIME_OUT;
+	func_block.IP_C := IP_C;
+	func_block.S_BUF := S_BUF;
+	func_block.R_BUF := R_BUF;
+
+	func_block();
+  IP_C  := func_block.IP_C;
+	S_BUF  := func_block.S_BUF;
+	R_BUF  := func_block.R_BUF;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

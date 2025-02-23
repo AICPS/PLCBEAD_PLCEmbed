@@ -1,0 +1,71 @@
+PROGRAM MD5_CRAM_AUTH_DEMO
+
+	VAR
+		run :	BOOL := TRUE;
+		timestamp :	oscat_STRING64 := 'PDQwMzYuMTA3NjMyNDM4MUBndWlsZGVuc3Rlcm4uemVpdGZvcm0uZGU+';
+		password :	oscat_STRING64 := 'geheimes_passwort';
+		username :	oscat_STRING64 := 'benutzer@zeitform.de';
+		auth_key :	oscat_STRING192;
+		MD5_CRAM_AUTH :	MD5_CRAM_AUTH;
+	END_VAR
+
+	[GRA]
+	400 400 0 0 0 0 0 
+
+	[LIT]
+	0
+
+	[TET]
+	12
+	35 6 118 30 524288 6 4 0 222 0 0 0 0 0 0 Tahoma 
+	Beispiel:
+	Zeitstempel: BASE64  = PDQwMzYuMTA3NjMyNDM4MUBndWlsZGVuc3Rlcm4uemVpdGZvcm0uZGU+
+	Zeitstempel: Klartext = <4036.1076324381@guildenstern.zeitform.de>
+
+	Ergebnis: BASE64 = YmVudXR6ZXJAemVpdGZvcm0uZGUgMmQ5MzczZGZkOTFlMmU2NjMxYzhlMWFkN
+	jk4MzRmYWQ=
+	Ergebnis: Klartext = benutzer@zeitform.de 2d9373dfd91e2e6631c8e1ad69834fad
+
+	80 40 85 42 4 5 run
+	116 40 121 42 4 3 run
+	75 44 85 46 4 5 username
+	116 44 126 46 4 3 username
+	75 48 85 50 4 5 password
+	116 48 126 50 4 3 password
+	74 52 85 54 4 5 timestamp
+	116 52 127 54 4 3 timestamp
+	75 56 85 58 4 5 auth_key
+	116 56 126 58 4 3 auth_key
+	87 34 114 37 7 6 MD5_CRAM_AUTH
+
+	[FBS]
+	1
+	852055 852005 114 61 0 0 MD5_CRAM_AUTH MD5_CRAM_AUTH  
+
+	[FPT]
+	5
+	87 40 114 42 RUN 0 0 0 2 128 128 @ BOOL 
+	87 44 114 46 USERNAME 0 0 0 2 128 128 @ oscat_STRING64 
+	87 48 114 50 PASSWORD 0 0 0 2 128 128 @ oscat_STRING64 
+	87 52 114 54 B64_TS 0 0 0 2 128 128 @ oscat_STRING64 
+	87 56 114 58 AUTH_KEY 0 0 0 2 128 128 @ oscat_STRING192 
+
+	[AKT]
+	0
+
+	[STT]
+	0
+
+	[TRT]
+	0
+
+	[KOT]
+	0
+
+	[VER]
+	0
+
+	[IBX]
+	0
+
+END_PROGRAM

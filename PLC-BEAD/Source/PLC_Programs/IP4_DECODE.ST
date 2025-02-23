@@ -1,0 +1,64 @@
+TYPE
+  oscat_STRING80             : STRING;
+END_TYPE
+
+FUNCTION_BLOCK IP4_DECODE_Block
+
+	VAR_INPUT
+		STR :	oscat_STRING80;
+	END_VAR
+
+
+	VAR_OUTPUT
+		IP4_DECODE :	DWORD;
+	END_VAR
+
+
+	VAR
+		pos :	INT;
+		IS_NUM :	IS_NUM;
+	END_VAR
+
+	IP4_DECODE := DWORD#0;
+	pos := FIND(str, '.');
+	WHILE pos > 0 DO
+		IP4_DECODE := SHL(IP4_DECODE,8);
+		IF POS > 1 AND POS <= 4 THEN
+			IS_NUM(STR:=LEFT(str,pos - 1));
+			IF IS_NUM.IS_NUM THEN
+				IP4_DECODE := IP4_DECODE OR STRING_TO_DWORD(IS_NUM.STR);
+			END_IF;
+		END_IF;
+		str := DELETE(str, pos, 1);
+		pos := FIND(str, '.');
+	END_WHILE;
+
+	IP4_DECODE := SHL(IP4_DECODE,8);
+	IS_NUM(STR:=str);
+	IF IS_NUM.IS_NUM THEN
+	IP4_DECODE := IP4_DECODE OR STRING_TO_DWORD(str);
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+	VAR
+		STR :	oscat_STRING80;
+		IP4_DECODE :	DWORD;
+
+		func_block : IP4_DECODE_Block;
+	END_VAR
+	func_block.STR := STR;
+
+	func_block();
+	IP4_DECODE  := func_block.IP4_DECODE;
+END_PROGRAM
+
+CONFIGURATION Config0
+
+  	RESOURCE Res0 ON PLC
+    	TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    	PROGRAM instance0 WITH task0 : program0;
+  	END_RESOURCE
+
+END_CONFIGURATION

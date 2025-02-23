@@ -1,0 +1,27 @@
+FUNCTION BIT_LOAD_DW:DWORD
+
+	VAR_INPUT
+		IN :	DWORD;
+		VAL :	BOOL;
+		POS :	INT;
+	END_VAR
+
+	IF VAL THEN
+		BIT_LOAD_DW := IN OR SHL(DWORD#1,POS);
+	ELSE
+		BIT_LOAD_DW := IN AND (NOT SHL(DWORD#1,POS));
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalVaR1  : BOOL;
+	LocalVaR2 : INT;
+    LocalOUT  : DWORD;
+  END_VAR
+
+  LocalOUT := BIT_LOAD_DW(LocalVar0, LocalVaR1 , LocalVaR2);
+END_PROGRAM
+

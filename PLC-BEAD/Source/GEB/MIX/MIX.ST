@@ -1,0 +1,26 @@
+FUNCTION MIX:REAL
+
+	VAR_INPUT
+		A :	REAL;
+		B :	REAL;
+		M :	REAL;
+	END_VAR
+
+	MIX := (1.0 - M) * A + M * B;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		A :	REAL;
+		B :	REAL;
+		M :	REAL;
+
+		OUT : REAL;
+	END_VAR
+
+	OUT := MIX(A, B, M);
+	
+END_PROGRAM
+
+

@@ -1,0 +1,26 @@
+FUNCTION WINDOW2:BOOL
+	VAR_INPUT
+		LOW :	REAL;
+		IN :	REAL;
+		HIGH :	REAL;
+	END_VAR
+	window2 := (in <= high) AND (in >= low);
+END_FUNCTION
+
+PROGRAM program0
+  	VAR
+		LOW :	REAL;
+		IN :	REAL;
+		HIGH :	REAL;
+		CEIL5_OUT : BOOL;
+	END_VAR
+
+  	CEIL5_OUT := window2(LOW, IN, HIGH);
+END_PROGRAM
+
+CONFIGURATION Config0
+  	RESOURCE Res0 ON PLC
+    	TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    	PROGRAM instance0 WITH task0 : program0;
+  	END_RESOURCE
+END_CONFIGURATION

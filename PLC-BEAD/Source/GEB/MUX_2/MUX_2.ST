@@ -1,0 +1,24 @@
+FUNCTION MUX_2:BOOL
+
+	VAR_INPUT
+		D0 :	BOOL;
+		D1 :	BOOL;
+		A0 :	BOOL;
+	END_VAR
+
+	MUX_2 := SEL(A0, D0, D1);
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		D0 :	BOOL;
+		D1 :	BOOL;
+		A0 :	BOOL;
+		OUT : BOOL;
+	END_VAR
+
+	OUT := MUX_2(D0, D1, A0);
+	
+END_PROGRAM
+

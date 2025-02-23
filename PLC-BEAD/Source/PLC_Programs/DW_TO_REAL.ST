@@ -1,0 +1,26 @@
+FUNCTION_BLOCK DW_TO_REAL_Block
+  VAR_INPUT
+    X :	DWORD;
+  END_VAR
+
+  VAR_OUTPUT
+    DW_TO_REAL :	REAL;
+  END_VAR
+
+  VAR
+    BUF_TO_REAL :	BUF_TO_REAL;
+    i :	INT;
+  END_VAR
+
+  FOR I := 0 TO 1 DO
+    BUF_TO_REAL.REQ        := I > 0;
+    BUF_TO_REAL.BUF_FORMAT := FALSE;
+    BUF_TO_REAL.BUF_OFFS   := DINT#0;
+    BUF_TO_REAL.BUF_CNT    := DINT#4;
+    BUF_TO_REAL.BUFFER     := X;
+    BUF_TO_REAL.DST        := DW_TO_REAL;
+    BUF_TO_REAL();
+    X           := BUF_TO_REAL.BUFFER;
+    DW_TO_REAL  := BUF_TO_REAL.DST;
+  END_FOR;
+END_FUNCTION_BLOCK

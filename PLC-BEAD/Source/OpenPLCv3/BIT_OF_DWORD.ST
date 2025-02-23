@@ -1,0 +1,30 @@
+FUNCTION BIT_OF_DWORD : BOOL
+  VAR_INPUT
+    IN : DWORD;
+    N : INT;
+  END_VAR
+
+  BIT_OF_DWORD := (SHR(in,N) AND 16#00000001) > 0;
+END_FUNCTION
+
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+    LocalVar2 : INT;
+    LocalVar1 : BOOL;
+    CEIL5_OUT : BOOL;
+  END_VAR
+
+  CEIL5_OUT := BIT_OF_DWORD(LocalVar0, LocalVar2);
+  LocalVar1 := CEIL5_OUT;
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

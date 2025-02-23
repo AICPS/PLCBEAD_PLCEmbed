@@ -1,0 +1,20 @@
+FUNCTION NEGX:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	NEGX := -X;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		_X : REAL;
+		OUT : REAL;
+	END_VAR
+
+	OUT := NEGX(_X);
+END_PROGRAM
+
+

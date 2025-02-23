@@ -1,0 +1,21 @@
+FUNCTION SINH:REAL
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	IF ABS(X) < 2.0E-3 THEN
+		SINH := X;
+	ELSE
+		SINH := (EXP(X) - EXP(-X)) * 0.5;
+	END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := SINH(LocalVar0);
+END_PROGRAM
+

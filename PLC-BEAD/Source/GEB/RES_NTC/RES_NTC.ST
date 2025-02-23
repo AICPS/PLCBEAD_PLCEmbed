@@ -1,0 +1,25 @@
+FUNCTION RES_NTC:REAL
+
+	VAR_INPUT
+		T :	REAL;
+		RN :	REAL;
+		B :	REAL;
+	END_VAR
+
+	RES_NTC := RN * EXP(B * (1.0 / (T+273.15) - 0.00335401643468053));
+
+END_FUNCTION
+
+PROGRAM program0
+
+	VAR
+		T :	REAL;
+		RN :	REAL;
+		B :	REAL;
+
+		OUT :	REAL;
+	END_VAR
+		OUT := RES_NTC(T, RN, B);
+
+END_PROGRAM
+

@@ -1,0 +1,63 @@
+RaspberryPI device can be used in two variants:
+
+   rasp_ssh (Rasberry PI over ssh) 
+   rasp_tcp (Rasberry PI over tcp server) 
+
+In both cases you need a TCP connection (typically via an Ethernet cable) to your Raspberry PI board,
+and you need to know its assigned IP 
+
+Here we'll assume IP=192.168.1.115 
+
+Instructions for setting up the device:
+
+=========  rasp_ssh (Rasberry PI over ssh)  ======================
+
+1: Open a "cmd" command prompt, change dir to your windows device dir (eg: CD C:\geb3\devices\raspberrypi )
+
+2: Edit the setenv.bat file.  Check the SSHUSER property and either set the password
+in SSHPASS or if using private/public authentication (recommended) edit the PRIVKEY variable
+and append the corresponding public key to your RPI  ~/.ssh/authorized_keys file
+
+3: To test that everything is working, run the testfirsttime.bat script, with the remote RPI box IP as argument:
+ > testfirsttime.bat 192.168.1.115
+  Doing first connection, this could take a while...
+  The following should connect and echo a message
+  All seems to work OK
+  DONE
+
+4: Copy the device files to the RPI box, by running
+ > copydev.bat 192.168.1.115
+This will create the remote directory layout, by default:
+  /home/pi/  <--- your SSH user 
+  /home/pi/target    <---  your main GEB directory 
+  /home/pi/target/workspace  <---   individual projects C files and program binaries will be created here
+  /home/pi/target/devices/raspberrypi  <---  device files (libraries and c files)
+You can also this manually; in that case you should copy the file targetbin\rasp.tgz to the remote
+ /home/pi/target/devices/raspberry dir and untar it.
+
+5: All should be working now. Try compiling and running some IEC project in the GEB IDE, selecting
+"rasp_ssh" as its device.
+
+========== rasp_tcp (Rasberry PI over TCP server)  ======================
+
+1-4: Repeat steps 1-4 above (but now it's not necessary to set the SSH parameters; you have the option to
+omit step 3 and do the work of step 4 manually)
+
+5: Logged inside the RPI box, start the server at some TCP-IP port  (here we use 4583)
+    $ cd 
+    $ cd target/devices/raspberrypi
+    $ sudo ./server/gebserver.bin 4583 . ../../workspace & 
+(to troubleshoot, you can add a verbosity arg: $ sudo ./server/gebserver.bin 4583 . ../../workspace 2 &  )
+The server keeps listening and will, at the IDE request, compile and run/debug the programs.
+For this, select "rasp_tcp" as device, and fill the address as "192.168.1.115:4583"
+
+===========================================================================
+
+
+To connect the pins to LEDs: we use the GPIO numbering
+ See eg http://www.raspberrypi-spy.co.uk/2012/06/simple-guide-to-the-rpi-gpio-header-and-pins/
+
+
+
+
+ 

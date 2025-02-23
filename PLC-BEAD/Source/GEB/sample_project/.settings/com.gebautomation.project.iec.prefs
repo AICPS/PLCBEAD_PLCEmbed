@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+iec.device=rasp_tcp
+iec.libn=WIN_LOCAL\:native,WIN_LOCAL\:nonnative

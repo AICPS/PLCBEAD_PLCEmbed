@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.gebautomation.graphmodel:Pou xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.gebautomation.graphmodel="http:///com/gebautomation/graphmodel/ladder.ecore" name="prog2ld" datatype="" modelVersion="3">
+  <body name="">
+    <gnodes xsi:type="com.gebautomation.graphmodel:Rail" name="LEFT RAIL" position="12;6" size="6;500" localId="101" leftRail="true">
+      <connsOut name="ENO" y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Rail" name="RIGHT RAIL" position="612;6" size="6;500" localId="113">
+      <connsIn name="EN" y="12">
+        <links src="//@body.0/@gnodes.3/@connsOut.0" linkId="47704"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Contact" name="G1" position="120;180" size="36;36" localId="150">
+      <connsOut y="24"/>
+      <connsIn y="24">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="48719"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Coil" name="B" position="276;120" size="36;36" localId="122">
+      <connsOut y="24"/>
+      <connsIn y="24">
+        <links src="//@body.0/@gnodes.2/@connsOut.0" linkId="23642">
+          <bendPoints>216;204</bendPoints>
+          <bendPoints>216;144</bendPoints>
+        </links>
+        <links src="//@body.0/@gnodes.4/@connsOut.0" linkId="89077">
+          <bendPoints>243;144</bendPoints>
+          <bendPoints>243;144</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Contact" name="A" position="120;120" size="36;36" localId="174" cType="/">
+      <connsOut y="24"/>
+      <connsIn y="24">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="59352"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="132;48" size="373;37" localId="12" comment="Elementary ladder (LD) program - sets B := G1 OR NOT A"/>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="156;216" size="123;25" localId="36" comment="G1 is EXTERNAL"/>
+  </body>
+  <pouInterface>
+    <vars name="A" datatype="BOOL" init="TRUE"/>
+    <vars name="B" datatype="BOOL"/>
+    <vars name="G1" datatype="BOOL" type="EXTERNAL"/>
+  </pouInterface>
+</com.gebautomation.graphmodel:Pou>

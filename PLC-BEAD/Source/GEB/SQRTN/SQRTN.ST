@@ -1,0 +1,26 @@
+FUNCTION SQRTN:REAL
+	
+	VAR_INPUT
+		X :	REAL;
+		N :	INT;
+	END_VAR
+
+	IF N > 0 THEN
+		SQRTN := EXP(LN(X) / INT_TO_REAL(n));
+	ELSE
+		SQRTN := 0.0;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		LocalVar0 : REAL;
+		LocalVaR1  : INT;
+		LocalOUT  : REAL;
+	END_VAR
+
+ 	LocalOUT := SQRTN(LocalVar0, LocalVaR1 );
+
+END_PROGRAM
+

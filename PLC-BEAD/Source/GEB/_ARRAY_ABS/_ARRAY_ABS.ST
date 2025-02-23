@@ -1,0 +1,36 @@
+TYPE
+	oscat_PT_ARRAY: ARRAY [1..100] OF REAL;
+END_TYPE
+
+FUNCTION _ARRAY_ABS : BOOL
+	VAR_IN_OUT
+		PT : oscat_PT_ARRAY;
+	END_VAR
+
+	VAR_INPUT
+		SIZE :	UINT;
+	END_VAR
+
+	VAR
+		i :	INT;
+		STOP :	INT;
+	END_VAR
+	
+	STOP := SHR(SIZE,2)-1;
+	FOR i := 1 TO STOP DO
+		PT[i] := ABS(PT[i]);
+	END_FOR;
+
+	_ARRAY_ABS := TRUE;
+	
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : oscat_PT_ARRAY;
+    LocalVaR1  : UINT;
+	LocalOUT  : BOOL;
+  END_VAR
+
+  LocalOUT := _ARRAY_ABS(LocalVar0, LocalVaR1 );
+END_PROGRAM

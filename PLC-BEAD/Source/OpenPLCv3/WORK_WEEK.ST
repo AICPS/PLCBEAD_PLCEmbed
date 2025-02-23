@@ -1,0 +1,113 @@
+FUNCTION LEAP_YEAR:BOOL
+
+  VAR_INPUT
+    YEAR :	INT;
+  END_VAR
+
+
+  IF (year MOD INT#400) = INT#00 THEN
+    leap_year := TRUE;
+  ELSIF (year MOD INT#100) = INT#00 THEN
+    leap_year := FALSE;
+  ELSIF (year MOD INT#04) = INT#00 THEN
+    leap_year := TRUE;
+  ELSE
+    leap_year := FALSE;
+  END_IF;
+
+END_FUNCTION
+
+FUNCTION DAY_OF_WEEK:INT
+
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+
+	DAY_OF_WEEK := UDINT_TO_INT((idate / UDINT#86400 + UDINT#3) MOD UDINT#7) + INT#01;
+
+END_FUNCTION
+
+FUNCTION YEAR_OF_DATE:INT
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	YEAR_OF_DATE := UDINT_TO_INT((idate+UDINT#43200) / UDINT#31557600 + UDINT#1970);
+END_FUNCTION
+
+FUNCTION _INT_TO_UDINT:UDINT
+	VAR_INPUT
+		IN :	INT;
+	END_VAR
+
+	_INT_TO_UDINT := DINT_TO_UDINT(INT_TO_DINT(IN));
+END_FUNCTION
+
+FUNCTION YEAR_BEGIN:UDINT
+	VAR_INPUT
+		Y :	INT;
+	END_VAR
+	year_begin := DWORD_TO_UDINT(SHR(UDINT_TO_DWORD(_INT_TO_UDINT(y) * UDINT#1461 - UDINT#2878169),2))*UDINT#86400;
+
+END_FUNCTION
+
+FUNCTION WORK_WEEK:INT
+
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	VAR
+		d1 :	UDINT;
+		w1 :	INT;
+		ds :	UDINT;
+		yr :	INT;
+		w31 :	INT;
+		w01 :	INT;
+		wm :	INT;
+	END_VAR
+
+	yr := YEAR_OF_DATE(idate);
+	d1 := year_begin(yr);
+	w1 := DAY_OF_WEEK(d1);
+	IF w1 < 5 THEN
+		ds := d1 - _INT_TO_UDINT(w1+6) * UDINT#86400;
+	ELSE
+		ds := d1 + _INT_TO_UDINT(1-w1) * UDINT#86400;
+	END_IF;
+
+	work_week := UDINT_TO_INT((idate - ds) / UDINT#604800);
+
+	IF work_week = 0 THEN
+		IF w1 > 1 THEN w31 := w1 - 1; ELSE W31 := 7; END_IF;
+		IF leap_year(yr - 1) THEN IF w31 > 1 THEN w01 := W31 - 1; ELSE w1 := 7; END_IF; END_IF;
+		WORK_WEEK := 52 + BOOL_TO_INT(w31 = 4 OR w01 = 4);
+	ELSE
+		IF leap_year(yr) THEN
+			IF w1 < 7 THEN w31 := w1 + 1; ELSE w31 := 1; END_IF;
+		ELSE
+			w31 := w1;
+		END_IF;
+		wm := 52 + BOOL_TO_INT(w31 = 4 OR w1 = 4);
+		IF work_week > wm THEN work_week := 1; END_IF;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    Y : UDINT;
+    CEIL5_OUT : INT;
+  END_VAR
+
+  CEIL5_OUT := WORK_WEEK(Y);
+END_PROGRAM
+
+CONFIGURATION Config0
+
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

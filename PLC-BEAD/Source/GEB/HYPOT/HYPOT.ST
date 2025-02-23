@@ -1,0 +1,20 @@
+FUNCTION HYPOT:REAL
+	VAR_INPUT
+		X :	REAL;
+		Y :	REAL;
+	END_VAR
+
+	HYPOT := SQRT(X*X + Y*Y);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    LocalVaR1  : REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := HYPOT(LocalVar0, LocalVaR1 );
+END_PROGRAM
+
+

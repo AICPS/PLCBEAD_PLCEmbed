@@ -1,0 +1,23 @@
+FUNCTION CEIL:INT
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	CEIL := REAL_TO_INT(X);
+	IF INT_TO_REAL(CEIL) < X THEN
+			CEIL := CEIL + 1;
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : INT;
+  END_VAR
+
+  CEIL5_OUT := CEIL(LocalVar0);
+END_PROGRAM
+
+

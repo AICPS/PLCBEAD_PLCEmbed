@@ -1,0 +1,263 @@
+FUNCTION_BLOCK INTERLOCK_Block
+
+	VAR_INPUT
+		I1 :	BOOL;
+		I2 :	BOOL;
+		TL :	TIME;
+	END_VAR
+
+
+	VAR_OUTPUT
+		Q1 :	BOOL;
+		Q2 :	BOOL;
+	END_VAR
+
+
+	VAR
+		T1 :	TOF;
+		T2 :	TOF;
+	END_VAR
+
+	T1(IN := I1, PT := TL);
+	T2(IN := I2, PT := TL);
+
+	Q1 := I1 AND NOT t2.Q;
+	Q2 := I2 AND NOT t1.Q;
+
+END_FUNCTION_BLOCK
+
+
+FUNCTION TIME_TO_UDINT2:UDINT
+	VAR_INPUT
+		X :	TIME;
+	END_VAR
+
+	TIME_TO_UDINT2 := DINT_TO_UDINT(TIME_TO_DINT(X));
+END_FUNCTION
+
+FUNCTION_BLOCK T_PLC_MS_block
+	VAR_OUTPUT
+		T_PLC_MS :	UDINT;
+	END_VAR
+
+	VAR
+		PLC_TICKS_PER_SEC :	INT;
+		PLC_SYS_TICK_CNT :	DINT;
+	END_VAR
+
+	VAR
+		debug :	BOOL;(*Debug-Mode ON / OFF*)
+		N :	INT;(*Debug-Faktor*)
+		Offset :	UDINT;(*Debug-Offset*)
+		temp :	DWORD := DWORD#1;(*Debug-Offset*)
+		MODE :	BOOL;(*modus*)
+		faktor :	UDINT;(*Systemtakt-Faktor*)
+		init :	BOOL;
+		v_plc_ticks_per_sec :	UDINT;
+		base :	UDINT := UDINT#1000;
+	END_VAR
+
+
+	IF init = FALSE THEN
+		v_plc_ticks_per_sec := INT_TO_UDINT(PLC_TICKS_PER_SEC);
+		IF v_plc_ticks_per_sec = UDINT#1024 THEN
+			faktor := UDINT#1;
+			MODE := FALSE;
+		ELSIF v_plc_ticks_per_sec > UDINT#0 THEN
+			IF v_plc_ticks_per_sec <= base THEN
+				faktor := base / v_plc_ticks_per_sec;
+				MODE := FALSE;
+			ELSE
+				faktor := v_plc_ticks_per_sec / base;
+				MODE := TRUE;
+			END_IF;
+		ELSE
+			faktor := UDINT#1;
+		END_IF;
+		init := TRUE;
+	END_IF;
+
+	IF MODE THEN
+		T_PLC_MS := DINT_TO_UDINT(PLC_SYS_TICK_CNT) / faktor;
+	ELSE
+		T_PLC_MS := DINT_TO_UDINT(PLC_SYS_TICK_CNT) * faktor;
+	END_IF;
+
+	IF debug THEN
+		T_PLC_MS := (DWORD_TO_UDINT(SHL(UDINT_TO_DWORD(T_PLC_MS),N) OR SHL(temp,N)) - UDINT#1) + Offset;
+	END_IF;
+END_FUNCTION_BLOCK
+
+FUNCTION FRMP_B:BYTE
+	VAR_INPUT
+		START :	BYTE;
+		DIR :	BOOL;
+		TD :	TIME;
+		TR :	TIME;
+	END_VAR
+
+	IF TD < TR THEN
+		FRMP_B := MIN(UDINT_TO_BYTE(DWORD_TO_UDINT(SHL(TIME_TO_DWORD(TD), 8)) / TIME_TO_UDINT2(TR)), SEL(DIR, START, USINT_TO_BYTE(USINT#255 - BYTE_TO_USINT(START))));
+		IF DIR THEN
+			FRMP_B := USINT_TO_BYTE(BYTE_TO_USINT(START) + BYTE_TO_USINT(FRMP_B));
+		ELSE
+			FRMP_B := USINT_TO_BYTE(BYTE_TO_USINT(START) - BYTE_TO_USINT(FRMP_B));
+		END_IF;
+	ELSE
+		FRMP_B := SEL(DIR, BYTE#0, BYTE#255);
+	END_IF;
+END_FUNCTION
+
+FUNCTION_BLOCK _RMP_B
+	VAR_INPUT
+		DIR :	BOOL;
+		E :	BOOL := TRUE;
+		TR :	TIME;
+	END_VAR
+
+
+	VAR_IN_OUT
+		RMP :	BYTE;
+	END_VAR
+
+
+	VAR
+		T_PLC_MS :	T_PLC_MS_block;
+		TX :	TIME;
+		TL :	TIME;
+		tn :	TIME;
+		init :	BOOL;
+		last_DIR :	BOOL;
+		START :	BYTE;
+	END_VAR
+
+
+	T_PLC_MS();
+	TX := UDINT_TO_TIME(T_PLC_MS.T_PLC_MS);
+
+	IF E AND init AND (DIR = last_DIR) AND (RMP <> SEL(DIR, BYTE#0, BYTE#255)) AND TR = tn THEN
+		RMP := FRMP_B(START, DIR, SUB_TIME(TX, TL), TR);
+	ELSE
+		init := TRUE;
+		TL := TX;
+		tn := tr;
+		START := RMP;
+	END_IF;
+	last_DIR := DIR;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK RMP_B_Block
+
+	VAR_INPUT
+		SET :	BOOL;
+		PT :	TIME;
+		E :	BOOL := TRUE;
+		UP :	BOOL := TRUE;
+		RST :	BOOL;
+	END_VAR
+
+
+	VAR_OUTPUT
+		OUT :	BYTE;
+		BUSY :	BOOL;
+		HIGH :	BOOL;
+		LOW :	BOOL;
+	END_VAR
+
+
+	VAR
+		rmp :	_RMP_B;
+	END_VAR
+
+	rmp(DIR := UP, E := E, TR := PT, RMP := OUT);
+	OUT := rmp.RMP;
+
+	IF RST THEN
+		OUT := BYTE#0;
+	ELSIF SET THEN
+		OUT := BYTE#255;
+	END_IF;
+
+LOW := OUT = BYTE#0;
+HIGH := OUT = BYTE#255;
+busy := NOT (low OR high) AND E;
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK BLIND_ACTUATOR_Block
+
+	VAR_INPUT
+		UP :	BOOL;
+		DN :	BOOL;
+		S_IN :	BYTE;
+		T_UD :	TIME := T#10s;
+		T_ANGLE :	TIME := T#3s;
+		T_LOCKOUT :	TIME := t#100ms;
+	END_VAR
+
+
+	VAR_OUTPUT
+		POS :	BYTE;
+		ANG :	BYTE;
+		QU :	BOOL;
+		QD :	BOOL;
+		STATUS :	BYTE;
+	END_VAR
+
+
+	VAR
+		POSition :	RMP_B_Block;
+		angle :	RMP_B_Block;
+		lock :	INTERLOCK_Block;
+	END_VAR
+
+	lock(i1 := UP, I2 := DN, TL := T_lockOUT);
+
+	angle(e := lock.Q1 OR lock.Q2, UP := lock.Q1, PT := T_Angle);
+	POSition(e := lock.Q1 AND angle.high OR lock.Q2 AND angle.low, up := lock.Q1, PT := T_UD);
+
+	POS := POSition.Out;
+	ang := angle.Out;
+
+	QU := lock.Q1;
+	QD := lock.Q2;
+
+	IF UP AND DN THEN
+		STATUS := BYTE#1;		
+	ELSIF UP THEN
+		STATUS := BYTE#121;
+	ELSIF DN THEN
+		STATUS := BYTE#122;
+	ELSE
+		STATUS := S_IN;
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+	VAR
+		UP :	BOOL;
+		DN :	BOOL;
+		S_IN :	BYTE;
+		T_UD :	TIME := T#10s;
+		T_ANGLE :	TIME := T#3s;
+		T_LOCKOUT :	TIME := t#100ms;
+		POS :	BYTE;
+		ANG :	BYTE;
+		QU :	BOOL;
+		QD :	BOOL;
+		func_block : BLIND_ACTUATOR_Block;
+	END_VAR
+	func_block.UP := UP;
+	func_block.DN := DN;
+	func_block.S_IN := S_IN ;
+	func_block.T_UD := T_UD;
+	func_block.T_ANGLE := T_ANGLE;
+	func_block.T_LOCKOUT := T_LOCKOUT;
+	func_block();
+	POS  := func_block.POS;
+	ANG  := func_block.ANG;
+	QU  := func_block.QU;
+	QD  := func_block.QD;
+END_PROGRAM
+

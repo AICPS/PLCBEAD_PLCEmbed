@@ -1,0 +1,54 @@
+TYPE
+	 oscat_STRING5  : STRING;
+END_TYPE
+
+FUNCTION_BLOCK HEX_TO_BYTE_Block
+
+	VAR_INPUT
+		HEX :	oscat_STRING5;
+	END_VAR
+
+
+	VAR_OUTPUT
+		HEX_TO_BYTE :	BYTE;
+	END_VAR
+
+
+	VAR
+		i :	INT;
+		stop :	INT;
+		X :	INT;
+	END_VAR
+
+	HEX_TO_BYTE := BYTE#0;
+	stop := LEN(HEX);
+	FOR I := 1 TO stop DO
+		x := GET_CHAR(Hex,I);
+		IF X > 47 AND x < 58 THEN
+			HEX_TO_BYTE := SHL(HEX_TO_BYTE,4) OR INT_TO_BYTE (X - 48);
+		ELSIF X > 64 AND X < 71 THEN
+			HEX_TO_BYTE := SHL(HEX_TO_BYTE,4) OR INT_TO_BYTE (X - 55);
+		ELSIF X > 96 AND X < 103 THEN
+			HEX_TO_BYTE := SHL(HEX_TO_BYTE,4) OR INT_TO_BYTE (X - 87);
+		END_IF;
+	END_FOR;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	HEX :	oscat_STRING5;
+	HEX_TO_BYTE :	BYTE;
+	func_block : HEX_TO_BYTE_Block;
+  END_VAR
+	func_block.HEX  :=HEX;
+	func_block();
+	HEX_TO_BYTE := func_block.HEX_TO_BYTE;
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

@@ -1,0 +1,21 @@
+
+FUNCTION CAUCHYCD:REAL
+	VAR_INPUT
+		X :	REAL;
+		T :	REAL;
+		U :	REAL;
+	END_VAR
+
+	CAUCHYCD := 0.5 + 0.318309886183791 * ATAN((X - T) / U);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	LocalVaR2 : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+	LocalOUT := CAUCHYCD(LocalVar0, LocalVaR1 , LocalVaR2);
+END_PROGRAM
+

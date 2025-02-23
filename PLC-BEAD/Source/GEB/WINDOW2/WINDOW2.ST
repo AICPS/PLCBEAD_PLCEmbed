@@ -1,0 +1,20 @@
+FUNCTION WINDOW2:BOOL
+	VAR_INPUT
+		LOW :	REAL;
+		IN :	REAL;
+		HIGH :	REAL;
+	END_VAR
+	window2 := (IN <= high) AND (IN >= LOW);
+END_FUNCTION
+
+PROGRAM program0
+  	VAR
+		LOW :	REAL;
+		IN :	REAL;
+		HIGH :	REAL;
+		CEIL5_OUT : BOOL;
+	END_VAR
+
+  	CEIL5_OUT := window2(LOW, IN, HIGH);
+END_PROGRAM
+

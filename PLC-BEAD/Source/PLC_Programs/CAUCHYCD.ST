@@ -1,0 +1,27 @@
+
+FUNCTION CAUCHYCD:REAL
+	VAR_INPUT
+		X :	REAL;
+		T :	REAL;
+		U :	REAL;
+	END_VAR
+
+	CAUCHYCD := 0.5 + 0.318309886183791 * ATAN((X - T) / U);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVar1 : REAL;
+	LocalVar2 : REAL;
+	LocalOUT  : REAL;
+  END_VAR
+	LocalOUT := CAUCHYCD(LocalVar0, LocalVar1, LocalVar2);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

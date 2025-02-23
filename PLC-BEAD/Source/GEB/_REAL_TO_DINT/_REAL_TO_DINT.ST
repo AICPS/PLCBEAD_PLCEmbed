@@ -1,0 +1,29 @@
+
+FUNCTION _REAL_TO_DINT:DINT
+  VAR_INPUT
+    X :	REAL;
+  END_VAR
+
+  IF REAL_TO_DINT(0.5) = DINT#1 THEN
+    _REAL_TO_DINT := REAL_TO_DINT(X);
+    RETURN;
+  END_IF;
+
+  IF X > 0.0 THEN
+    _REAL_TO_DINT := REAL_TO_DINT(X+0.5); 
+  ELSIF X < 0.0 THEN 
+    _REAL_TO_DINT := REAL_TO_DINT(X-0.5); 
+  ELSE 
+    _REAL_TO_DINT := DINT#0;
+  END_IF;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	  LocalOUT  : DINT;
+  END_VAR
+
+  LocalOUT := _REAL_TO_DINT(LocalVar0);
+END_PROGRAM
+

@@ -1,0 +1,35 @@
+FUNCTION COTH:REAL
+
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	IF X > 20.0 THEN
+		COTH :=1.0;
+	ELSIF X < -20.0 THEN
+		COTH := -1.0;
+	ELSE
+		COTH := 1.0 + 2.0 / (EXP(X * 2.0) - 1.0);
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		X :	REAL;
+		OUT : REAL;
+	END_VAR
+
+	OUT := COTH(X);
+	
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

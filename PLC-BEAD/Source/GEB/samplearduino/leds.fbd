@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.gebautomation.graphmodel:Pou xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:com.gebautomation.graphmodel="http:///com/gebautomation/graphmodel/ladder.ecore" name="leds" lang="fbd" datatype="" modelVersion="3">
+  <body name="">
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="TP" position="180;144" size="60;48" localId="2" fb="true">
+      <connsOut name="Q" y="24"/>
+      <connsOut name="ET" y="36"/>
+      <connsIn name="IN" y="24" negated="true">
+        <links src="//@body.0/@gnodes.1/@connsOut.0" linkId="4">
+          <bendPoints>258;276</bendPoints>
+          <bendPoints>258;205</bendPoints>
+          <bendPoints>162;205</bendPoints>
+          <bendPoints>162;168</bendPoints>
+        </links>
+      </connsIn>
+      <connsIn name="PT" y="36">
+        <links src="//@body.0/@gnodes.2/@connsOut.0" linkId="2">
+          <bendPoints>171;180</bendPoints>
+          <bendPoints>171;180</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="TP" position="180;252" size="60;48" localId="3" fb="true">
+      <connsOut name="Q" y="24"/>
+      <connsOut name="ET" y="36"/>
+      <connsIn name="IN" y="24" negated="true">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="3">
+          <bendPoints>276;168</bendPoints>
+          <bendPoints>276;239</bendPoints>
+          <bendPoints>162;239</bendPoints>
+          <bendPoints>162;276</bendPoints>
+        </links>
+      </connsIn>
+      <connsIn name="PT" y="36">
+        <links src="//@body.0/@gnodes.3/@connsOut.0" linkId="5">
+          <bendPoints>160;288</bendPoints>
+          <bendPoints>160;288</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="TIME#2s" position="36;168" size="97;24" localId="4">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="TIME#1s" position="36;276" size="107;24" localId="5">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Expression" name="DISABLE" position="36;96" size="103;24" localId="6">
+      <connsOut y="12"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:VarRef" name="RED" position="444;144" size="73;24" localId="7">
+      <connsIn y="12">
+        <links src="//@body.0/@gnodes.7/@connsOut.0" linkId="12"/>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:VarRef" name="GREEN" position="432;264" size="97;24" localId="8">
+      <connsIn y="12">
+        <links src="//@body.0/@gnodes.1/@connsOut.0" linkId="13">
+          <bendPoints>354;276</bendPoints>
+          <bendPoints>354;276</bendPoints>
+        </links>
+      </connsIn>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Block" name="AND" position="324;132" size="60;60" localId="9" firstExtensibleArg="IN1">
+      <connsOut y="24"/>
+      <connsIn name="IN1" y="24" flag="E" negated="true">
+        <links src="//@body.0/@gnodes.4/@connsOut.0" linkId="10">
+          <bendPoints>324;108</bendPoints>
+        </links>
+      </connsIn>
+      <connsIn name="IN2" y="36" flag="E">
+        <links src="//@body.0/@gnodes.0/@connsOut.0" linkId="11">
+          <bendPoints>311;168</bendPoints>
+          <bendPoints>311;168</bendPoints>
+        </links>
+      </connsIn>
+      <connsIn name="IN3" y="48" flag="E"/>
+    </gnodes>
+    <gnodes xsi:type="com.gebautomation.graphmodel:Annotation" position="60;12" size="565;73" localId="11" comment="Sample program for Arduino2560 MEGA board&#xD;&#xA;Turns on RED (pin3) for 2 seconds, then GREEN (pin 2) for 1 second . &#xD;&#xA;Pin 6 (with pullup) turns red off&#xD;&#xA;See README.txt for more details"/>
+  </body>
+  <pouInterface>
+    <vars name="DISABLE" datatype="BOOL" at="%IX1.6"/>
+    <vars name="GREEN" datatype="BOOL" at="%QX1.2"/>
+    <vars name="RED" datatype="BOOL" at="%QX1.3"/>
+  </pouInterface>
+</com.gebautomation.graphmodel:Pou>

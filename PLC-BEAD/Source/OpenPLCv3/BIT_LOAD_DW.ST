@@ -1,0 +1,33 @@
+FUNCTION BIT_LOAD_DW:DWORD
+
+	VAR_INPUT
+		IN :	DWORD;
+		VAL :	BOOL;
+		POS :	INT;
+	END_VAR
+
+	IF val THEN
+		BIT_LOAD_DW := in OR SHL(DWORD#1,pos);
+	ELSE
+		BIT_LOAD_DW := in AND (NOT SHL(DWORD#1,pos));
+	END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalVar1 : BOOL;
+	LocalVar2 : INT;
+    LocalOUT  : DWORD;
+  END_VAR
+
+  LocalOUT := BIT_LOAD_DW(LocalVar0, LocalVar1, LocalVar2);
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

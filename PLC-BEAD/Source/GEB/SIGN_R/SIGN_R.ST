@@ -1,0 +1,18 @@
+FUNCTION SIGN_R : BOOL
+  VAR_INPUT
+    IN : REAL;
+  END_VAR
+
+  SIGN_R := IN < 0.0;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : BOOL;
+  END_VAR
+
+  CEIL5_OUT := SIGN_R(LocalVar0);
+END_PROGRAM
+
+

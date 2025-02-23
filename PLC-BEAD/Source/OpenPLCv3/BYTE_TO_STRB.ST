@@ -1,0 +1,44 @@
+
+FUNCTION_BLOCK BYTE_TO_STRB_Block
+	VAR_INPUT
+		IN :	BYTE;
+	END_VAR
+
+	VAR_OUTPUT
+		BYTE_TO_STRB :	STRING;
+	END_VAR
+
+	VAR
+		i :	INT;
+	END_VAR
+
+	BYTE_TO_STRB := '';
+	FOR i := 1 TO 8 DO
+		IF (in AND BYTE#2#1000_0000) = BYTE#2#1000_0000 THEN
+			BYTE_TO_STRB := CONCAT(BYTE_TO_STRB,'1');
+		ELSE
+			BYTE_TO_STRB := CONCAT(BYTE_TO_STRB,'0');
+		END_IF;
+		in := SHL(in, 1);
+	END_FOR;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : BYTE;
+	LocalOUT  : STRING;
+	func_block : BYTE_TO_STRB_Block;
+  END_VAR
+	func_block.IN  := LocalVar0;
+	func_block();
+	LocalOUT := func_block.BYTE_TO_STRB;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+  RESOURCE Res0 ON PLC
+    TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+    PROGRAM instance0 WITH task0 : program0;
+  END_RESOURCE
+END_CONFIGURATION

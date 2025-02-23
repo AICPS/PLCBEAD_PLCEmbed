@@ -1,0 +1,17 @@
+FUNCTION AGDF:REAL
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	AGDF := LN((1.0 + SIN(X)) / COS(X));
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    LocalOUT  : REAL;
+  END_VAR
+
+  LocalOUT := AGDF(LocalVar0);
+END_PROGRAM
+

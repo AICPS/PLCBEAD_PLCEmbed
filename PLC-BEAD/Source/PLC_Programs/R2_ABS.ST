@@ -1,0 +1,52 @@
+TYPE REAL2 :
+	
+	STRUCT
+		R1 : REAL;
+		RX : REAL;
+	END_STRUCT;
+
+END_TYPE
+
+FUNCTION_BLOCK R2_ABS_Block
+
+	VAR_INPUT
+		X :	REAL2;
+	END_VAR
+
+
+	VAR_OUTPUT
+		R2_ABS :	REAL2;
+	END_VAR
+
+	IF X.RX >= 0.0 THEN
+		R2_ABS.RX := X.RX;
+		R2_ABS.R1 := X.R1;
+	ELSE
+		R2_ABS.RX := -X.RX;
+		R2_ABS.R1 := -X.R1;
+	END_IF;
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+
+	VAR
+		X :	REAL2;
+
+        R2_ABS :	REAL2;
+		func_block : R2_ABS_Block;
+	END_VAR
+	func_block.X := X;
+	func_block();
+	R2_ABS := func_block.R2_ABS;
+
+END_PROGRAM
+
+CONFIGURATION Config0
+	
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

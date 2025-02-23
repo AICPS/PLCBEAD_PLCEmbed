@@ -1,0 +1,23 @@
+FUNCTION COSH:REAL
+	VAR_INPUT
+		X :	REAL;
+	END_VAR
+
+	VAR
+		T :	REAL;
+	END_VAR
+
+	T := EXP(X);
+	COSH := (1.0 / T + T) * 0.5;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := COSH(LocalVar0);
+END_PROGRAM
+
+

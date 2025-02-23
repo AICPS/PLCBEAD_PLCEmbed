@@ -1,0 +1,18 @@
+FUNCTION C_TO_F:REAL
+	VAR_INPUT
+		CELSIUS :	REAL;
+	END_VAR
+
+	C_TO_F := CELSIUS * 1.8 + 32.0;
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+    CEIL5_OUT : REAL;
+  END_VAR
+
+  CEIL5_OUT := C_TO_F(LocalVar0);
+END_PROGRAM
+
+

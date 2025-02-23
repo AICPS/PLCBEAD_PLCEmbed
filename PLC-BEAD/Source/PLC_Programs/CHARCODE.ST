@@ -1,0 +1,87 @@
+TYPE
+  oscat_CHARNAMES	: ARRAY [1..11] OF STRING;
+END_TYPE
+
+
+FUNCTION_BLOCK SETUP_CHARNAMES_Block
+
+	VAR_IN_OUT
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+	
+	VAR
+		init :	BOOL;
+	END_VAR
+
+	IF init THEN RETURN; END_IF;
+
+	init := TRUE;
+
+	CHARNAMES[01] := '123';
+	CHARNAMES[02] := '456';
+	CHARNAMES[03] := 'zgsdafasf';
+	CHARNAMES[04] := 'sadfsdfa';
+	CHARNAMES[05] := 'asdfdsafdfds';
+	CHARNAMES[06] := 'sadfsdfsdf';
+	CHARNAMES[07] := 'sfsfdfdddd';
+	CHARNAMES[08] := 'dddddted';
+	CHARNAMES[10] := 'wer';
+	CHARNAMES[11] := 'werwer';
+
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK CHARCODE_Block
+	VAR_INPUT
+		STR :	STRING;
+	END_VAR
+
+	VAR_OUTPUT
+		CHARCODE :	BYTE;
+	END_VAR
+
+	VAR
+		found :	STRING;
+		search :	STRING;
+		pos :	INT;
+		CODE :	CODE;
+		i :	INT;
+		SETUP_CHARNAMES :	SETUP_CHARNAMES_Block;
+		CHARNAMES :	oscat_CHARNAMES;
+	END_VAR
+
+	SETUP_CHARNAMES(CHARNAMES:=CHARNAMES);
+	CHARNAMES:=SETUP_CHARNAMES.CHARNAMES;
+
+	IF LEN(str) = 1 THEN
+		CODE(STR:=STR,POS:=1);
+		CHARCODE:=CODE.CODE;
+	ELSIF LEN(str) > 0 THEN
+		search := CONCAT('&', str);
+		search := CONCAT(search, ';');
+		WHILE pos = 0 AND (i < 11) DO
+			i := i + 1;
+			pos := FIND(CHARNAMES[i], search);
+		END_WHILE;
+		found := MID(CHARNAMES[i], 1, pos - 1);
+		CODE(STR:=found,POS:=1);
+		CHARCODE:=CODE.CODE;
+	END_IF;
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+	STR :	STRING;
+	CHARCODE :	BYTE;
+	func_block : CHARCODE_Block;
+  END_VAR
+	func_block.STR  :=STR ;
+	func_block();
+	CHARCODE := func_block.CHARCODE;
+END_PROGRAM
+
+CONFIGURATION Config0
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+END_CONFIGURATION

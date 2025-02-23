@@ -1,0 +1,27 @@
+FUNCTION MUL_ADD:REAL
+
+	VAR_INPUT
+		X :	REAL;
+		K :	REAL;
+		O :	REAL;
+	END_VAR
+
+
+	MUL_ADD := X * K + O;
+	
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		X :	REAL;
+		K :	REAL;
+		O :	REAL;
+
+		OUT : REAL;
+	END_VAR
+
+	OUT := MUL_ADD(X, K, O);
+	
+END_PROGRAM
+
+

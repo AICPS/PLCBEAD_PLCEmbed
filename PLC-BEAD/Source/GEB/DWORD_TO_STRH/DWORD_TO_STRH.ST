@@ -1,0 +1,25 @@
+FUNCTION_BLOCK DWORD_TO_STRH_Block
+
+	VAR_INPUT
+		IN :	DWORD;
+	END_VAR
+
+	VAR_OUTPUT
+		DWORD_TO_STRH :	STRING;
+	END_VAR
+
+	DWORD_TO_STRH:=DWORD_TO_STRING(IN);
+
+END_FUNCTION_BLOCK
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalOUT  : STRING;
+	func_block : DWORD_TO_STRH_Block;
+  END_VAR
+	func_block.IN  := LocalVar0;
+	func_block();
+	LocalOUT := func_block.DWORD_TO_STRH;
+END_PROGRAM
+

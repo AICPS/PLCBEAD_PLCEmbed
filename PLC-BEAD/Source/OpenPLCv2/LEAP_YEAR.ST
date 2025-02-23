@@ -1,0 +1,37 @@
+FUNCTION LEAP_YEAR:BOOL
+
+  VAR_INPUT
+    YEAR :	INT;
+  END_VAR
+
+
+  IF (year MOD INT#400) = INT#00 THEN
+    leap_year := TRUE;
+  ELSIF (year MOD INT#100) = INT#00 THEN
+    leap_year := FALSE;
+  ELSIF (year MOD INT#04) = INT#00 THEN
+    leap_year := TRUE;
+  ELSE
+    leap_year := FALSE;
+  END_IF;
+
+END_FUNCTION
+
+PROGRAM program0
+	VAR
+		YEAR :	INT;
+		OUT : BOOL;
+	END_VAR
+
+	OUT := LEAP_YEAR(YEAR);
+END_PROGRAM
+
+
+CONFIGURATION Config0
+
+	RESOURCE Res0 ON PLC
+		TASK task0(INTERVAL := T#20ms,PRIORITY := 0);
+		PROGRAM instance0 WITH task0 : program0;
+	END_RESOURCE
+
+END_CONFIGURATION

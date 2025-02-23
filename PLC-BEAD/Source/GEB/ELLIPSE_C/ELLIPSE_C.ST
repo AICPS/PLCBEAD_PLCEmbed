@@ -1,0 +1,20 @@
+FUNCTION ELLIPSE_C:REAL
+
+VAR_INPUT
+	R1  :	REAL;
+	R2 :	REAL;
+END_VAR
+
+ELLIPSE_C := 3.14159265358979323846264338327950288 * (3.0 * (R1 +R2) - SQRT((3.0 * R1  + R2) * (3.0 * R2 + R1 )));
+
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : REAL;
+	LocalVaR1  : REAL;
+	  LocalOUT  : REAL;
+  END_VAR
+  	LocalOUT := ELLIPSE_C(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

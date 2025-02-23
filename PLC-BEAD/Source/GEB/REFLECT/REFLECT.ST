@@ -1,0 +1,29 @@
+FUNCTION REFLECT:DWORD
+	VAR_INPUT
+		D :	DWORD;
+		L :	INT;
+	END_VAR
+
+	VAR
+		i :	INT;
+		_d :	DWORD;
+	END_VAR
+
+	REFLECT := DWORD#0;
+	_d := D;
+	FOR i := 1 TO L DO
+		REFLECT := SHL(REFLECT, 1) OR BOOL_TO_DWORD((_d AND DWORD#2#0000_0001) > DWORD#0); (* D.0 *)
+		_d := SHR(_d, 1);
+	END_FOR;
+	REFLECT := REFLECT OR SHL(_d, L);
+END_FUNCTION
+
+PROGRAM program0
+  VAR
+    LocalVar0 : DWORD;
+	LocalVaR1  : INT;
+	LocalOUT  : DWORD;
+  END_VAR
+  	LocalOUT := REFLECT(LocalVar0, LocalVaR1 );
+END_PROGRAM
+

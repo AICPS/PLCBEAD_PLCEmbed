@@ -1,0 +1,188 @@
+FUNCTION DAY_OF_WEEK:INT
+
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+
+	DAY_OF_WEEK := UDINT_TO_INT((IDATE / UDINT#86400 + UDINT#3) MOD UDINT#7) + INT#01;
+END_FUNCTION
+
+FUNCTION LEAP_OF_DATE:BOOL
+
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	LEAP_OF_DATE := SHL(UDINT_TO_DWORD((IDATE + UDINT#43200) / UDINT#31557600), 30) = DWORD#16#80000000;
+END_FUNCTION
+
+FUNCTION DAY_OF_YEAR:INT
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	DAY_OF_YEAR  := UDINT_TO_INT(((IDATE) / UDINT#86400) MOD UDINT#1461);
+	IF DAY_OF_YEAR  > 729 THEN
+		IF DAY_OF_YEAR  > 1095 THEN DAY_OF_YEAR  := DAY_OF_YEAR  - 1095; ELSE DAY_OF_YEAR  := DAY_OF_YEAR  - 729; END_IF;
+	ELSIF DAY_OF_YEAR  > 364 THEN
+		DAY_OF_YEAR  := DAY_OF_YEAR  - 364;
+	ELSE
+		DAY_OF_YEAR  := DAY_OF_YEAR  + 1;
+	END_IF;
+END_FUNCTION
+
+FUNCTION MONTH_OF_DATE:INT
+
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	MONTH_OF_DATE := DAY_OF_YEAR(IDATE);
+	IF MONTH_OF_DATE < 32 THEN
+		MONTH_OF_DATE := 1;
+	ELSIF LEAP_OF_DATE((IDATE)) THEN
+		MONTH_OF_DATE := (MONTH_OF_DATE * 53 + 1668) / 1623;
+	ELSE
+		MONTH_OF_DATE := (MONTH_OF_DATE * 53 + 1700) / 1620;
+	END_IF;
+END_FUNCTION
+
+FUNCTION YEAR_OF_DATE:INT
+	VAR_INPUT
+		IDATE :	UDINT;
+	END_VAR
+
+	YEAR_OF_DATE := UDINT_TO_INT((IDATE+UDINT#43200) / UDINT#31557600 + UDINT#1970);
+END_FUNCTION
+
+
+FUNCTION_BLOCK METER_STAT_Block
+
+	VAR_INPUT
+		IN :	REAL;
+		DI :	UDINT;
+		RST :	BOOL;
+	END_VAR
+
+
+	VAR_IN_OUT
+		LAST_DAY  :	REAL;
+		CURRENT_DAY  :	REAL;
+		LAST_WEEK :	REAL;
+		CURRENT_WEEK :	REAL;
+		LAST_MONTH :	REAL;
+		CURRENT_MONTH :	REAL;
+		LAST_YEAR  :	REAL;
+		CURRENT_YEAR  :	REAL;
+	END_VAR
+
+
+	VAR RETAIN 
+		YEAR_START :	REAL;
+		MONTH_START :	REAL;
+		week_START :	REAL;
+		DAY_START :	REAL;
+		last_run :	UDINT;
+	END_VAR
+
+	IF RST THEN
+		Last_DAY  := 0.0;
+		Current_DAY  := 0.0;
+		DAY_START := IN;
+		Last_week := 0.0;
+		Current_week := 0.0;
+		Week_START := IN;
+		Last_MONTH := 0.0;
+		Current_MONTH := 0.0;
+		MONTH_START := IN;
+		last_YEAR  := 0.0;
+		current_YEAR  := 0.0;
+		YEAR_START := IN;
+	ELSE
+		Current_DAY  := IN - DAY_START;
+		Current_Week := In - Week_START;
+		Current_MONTH := IN - MONTH_START;
+		Current_YEAR  := IN - YEAR_START;
+	END_IF;
+
+	IF YEAR_OF_DATE(DI) > YEAR_OF_DATE(last_run) THEN
+		(* a new YEAR  has STARTed *)
+		last_YEAR  := current_YEAR;
+		current_YEAR  := 0.0;
+		YEAR_START := IN;
+		last_MONTH := current_MONTH;
+		current_MONTH := 0.0;
+		MONTH_START := IN;
+		last_DAY  := current_DAY;
+		current_DAY  := 0.0;
+		DAY_START := IN;
+	ELSIF MONTH_OF_DATE(DI) > MONTH_OF_DATE(last_run) THEN
+		(* a new MONTH has STARTed, january is alrerady done by YEAR  CHAnge *)
+		last_MONTH := current_MONTH;
+		current_MONTH := 0.0;
+		MONTH_START := IN;
+		last_DAY  := current_DAY;
+		current_DAY  := 0.0;
+		DAY_START := IN;
+	ELSIF DAY_OF_YEAR(DI) > DAY_OF_YEAR(last_run) THEN
+		(* DAY  has CHAged, fiRST DAY  of YEAR  and fiRST DAY  of MONTH has already been taken care of *)
+		last_DAY  := current_DAY;
+		current_DAY  := 0.0;
+		DAY_START := IN;
+	END_IF;
+	IF DAY_OF_WEEK(DI) < DAY_OF_WEEK(last_run) THEN
+		(* a new week has STARTed *)
+		last_week := current_week;
+		current_week := 0.0;
+		week_START := IN;
+	END_IF;
+	last_run := di;
+
+END_FUNCTION_BLOCK
+
+
+PROGRAM program0
+
+	VAR
+		IN :	REAL;
+		DI :	UDINT;
+		RST :	BOOL;
+
+		LAST_DAY  :	REAL;
+		CURRENT_DAY  :	REAL;
+		LAST_WEEK :	REAL;
+		CURRENT_WEEK :	REAL;
+		LAST_MONTH :	REAL;
+		CURRENT_MONTH :	REAL;
+		LAST_YEAR  :	REAL;
+		CURRENT_YEAR  :	REAL;
+
+		func_block : METER_STAT_Block;
+	END_VAR
+
+	func_block.IN := IN;
+	func_block.DI := DI;
+	func_block.RST := RST;
+	func_block.LAST_DAY  := LAST_DAY;
+	func_block.CURRENT_DAY  := CURRENT_DAY;
+	func_block.LAST_WEEK := LAST_WEEK;
+	func_block.CURRENT_WEEK := CURRENT_WEEK;
+	func_block.LAST_MONTH := LAST_MONTH;
+	func_block.CURRENT_MONTH := CURRENT_MONTH;
+	func_block.LAST_YEAR  := LAST_YEAR;
+	func_block.CURRENT_YEAR  := CURRENT_YEAR;
+
+	func_block();
+
+	LAST_DAY   := func_block.LAST_DAY;
+	CURRENT_DAY   := func_block.CURRENT_DAY;
+	LAST_WEEK  := func_block.LAST_WEEK;
+	CURRENT_WEEK  := func_block.CURRENT_WEEK;
+	LAST_MONTH  := func_block.LAST_MONTH;
+	CURRENT_MONTH  := func_block.CURRENT_MONTH;
+	LAST_YEAR   := func_block.LAST_YEAR;
+	CURRENT_YEAR   := func_block.CURRENT_YEAR;
+
+END_PROGRAM
+
